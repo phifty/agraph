@@ -6,7 +6,7 @@ describe AllegroGraph::Server do
   use_real_transport!
 
   before :each do
-    @server = AllegroGraph::Server.new
+    @server = AllegroGraph::Server.new :username => "test", :password => "test"
   end
 
   describe "version" do
@@ -17,6 +17,14 @@ describe AllegroGraph::Server do
         :date     => "March 10, 2010 10:23:52 GMT-0800",
         :revision => "[unknown]"
       }
+    end
+    
+  end
+
+  describe "catalogs" do
+
+    it "should return the catalogs of the server" do
+      @server.catalogs.should == [ @server.root_catalog ]
     end
     
   end

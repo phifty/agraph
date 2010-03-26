@@ -3,6 +3,8 @@ require File.expand_path(File.join(File.dirname(__FILE__), "..", "..", "..", "li
 
 describe AllegroGraph::Transport do
 
+  use_real_transport!
+    
   describe "request" do
 
     before :each do
@@ -54,8 +56,55 @@ describe AllegroGraph::Transport do
     end
     
     it "should serialize the given parameters" do
-      AllegroGraph::Transport.send(:serialize_parameters, @parameters).should ==
-        "?another_test=test&test=1"
+      AllegroGraph::Transport.send(:serialize_parameters, @parameters).should == "?another_test=test&test=1"
+    end
+
+  end
+
+end
+
+describe AllegroGraph::AuthorizedTransport do
+
+  describe "request" do
+
+    before :each do
+      AllegroGraph::Transport.stub!(:request)
+    end
+
+    it "should call Transport.request with extended headers" do
+      AllegroGraph::Transport.should_receive(:request).with(
+        :get, "/", hash_including(:headers => { "Authorization" => "Basic dGVzdDp0ZXN0\n" })
+      )
+      AllegroGraph::AuthorizedTransport.request :get, "/", :auth_type => :basic, :username => "test", :password => "test"
+    end
+
+  end
+
+end
+
+describe AllegroGraph::JSONTransport do
+
+  describe "request" do
+
+    before :each do
+      AllegroGraph::AuthorizedTransport.stub!(:request)
+    end
+
+    it "should call Transport.request with extended headers" do
+      AllegroGraph::AuthorizedTransport.should_receive(:request).with(
+        :get, "/", hash_including(:headers => { "Content-Type" => "application/json" })
+      )
+      AllegroGraph::JSONTransport.request :get, "/"
+    end
+
+    it "should call AuthorizedTransport.request and parse the response" do
+      AllegroGraph::AuthorizedTransport.should_receive(:request).and_return("{\"test\":\"test\"}")
+      AllegroGraph::JSONTransport.request(:get, "/").should == { "test" => "test" }
+    end
+
+    it "should return nil if AuthorizedTransport.request returns nothing" do
+      AllegroGraph::AuthorizedTransport.should_receive(:request).and_return("")
+      AllegroGraph::JSONTransport.request(:get, "/").should be_nil
     end
 
   end

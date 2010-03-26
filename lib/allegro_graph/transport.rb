@@ -1,11 +1,12 @@
 require 'uri'
 require 'net/http'
+require 'base64'
 require 'json'
 
 module AllegroGraph
 
   # Common transport layer for http transfers.
-  class Transport
+  module Transport
 
     # The UnexpectedStatusCodeError is raised if the :expected_status_code option is given to
     # the :request method and the responded status code is different from the expected one.
@@ -67,19 +68,34 @@ module AllegroGraph
 
   end
 
-  # Common json transport layer for http transfers.
-  class JSONTransport < Transport
+  module AuthorizedTransport
 
-    def self.request(*arguments)
-      parse super(*arguments)
+    def self.request(http_method, url, options = { })
+      if options[:auth_type] == :basic
+        options[:headers] ||= { }
+        options[:headers]["Authorization"] = "Basic " + Base64.encode64("#{options[:username]}:#{options[:password]}")
+      end
+      Transport.request http_method, url, options
+    end
+    
+  end
+
+  # Common json transport layer for http transfers.
+  module JSONTransport
+
+    def self.request(http_method, url, options = { })
+      options[:headers] ||= { }
+      options[:headers]["Content-Type"] = "application/json"
+      parse AuthorizedTransport.request(http_method, url, options)
     end
 
     def self.serialize_parameter_value(value)
-      value.respond_to?(:to_json) ? value.to_json : super(value)
+      value.respond_to?(:to_json) ? value.to_json : AuthorizedTransport.serialize_parameter_value(value)
     end
 
-    def self.parse(response_body)
-      JSON.parse response_body
+    def self.parse(response)
+      return nil if response.nil? || response == ""
+      JSON.parse response
     end
 
   end

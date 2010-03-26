@@ -10,10 +10,14 @@ module FakeTransport
     @enabled = false
   end
 
+  def self.transport_class
+    AllegroGraph::Transport
+  end
+
   def self.fake!
     return unless @enabled
     @@fake ||= YAML::load_file File.join(File.dirname(__FILE__), "fake_transport.yml")
-    self.stub!(:request).and_return do |http_method, url, options|
+    transport_class.stub!(:request).and_return do |http_method, url, options|
       options ||= { }
       parameters            = options[:parameters]
       headers               = options[:headers]

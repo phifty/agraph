@@ -4,8 +4,7 @@ require File.expand_path(File.join(File.dirname(__FILE__), "..", "..", "..", "li
 describe AllegroGraph::Server do
 
   before :each do
-    FakeTransport.fake!
-    @server = AllegroGraph::Server.new
+    @server = AllegroGraph::Server.new :username => "test", :password => "test"
   end
 
   describe "==" do
@@ -22,6 +21,21 @@ describe AllegroGraph::Server do
     
   end
 
+  describe "request" do
+
+    before :each do
+      AllegroGraph::JSONTransport.stub!(:request)
+    end
+
+    it "should perform a authorized request" do
+      AllegroGraph::JSONTransport.should_receive(:request).with(
+        :get, "http://localhost:10035/", hash_including(:expected_status_code => 200)
+      ).and_return("test" => "test")
+      @server.request(:get, "/", :expected_status_code => 200).should == { "test" => "test" }
+    end
+
+  end
+
   describe "version" do
 
     it "should return the server's version" do
@@ -30,6 +44,14 @@ describe AllegroGraph::Server do
         :date     => "March 10, 2010 10:23:52 GMT-0800",
         :revision => "[unknown]"
       }
+    end
+
+  end
+
+  describe "catalogs" do
+
+    it "should return the catalogs of the server" do
+      @server.catalogs.should == [ @server.root_catalog ]
     end
 
   end

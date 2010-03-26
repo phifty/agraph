@@ -16,3 +16,12 @@
   :response:
     :code:      "200"
     :body:      "[unknown]"
+-
+  :http_method: "get"
+  :url:         "http://localhost:10035/catalogs"
+  :headers:
+    "Authorization":  "Basic dGVzdDp0ZXN0\n"
+    "Content-Type":   "application/json"
+  :response:
+    :code:      "200"
+    :body:      ""

@@ -27,11 +27,18 @@ describe AllegroGraph::Server do
       AllegroGraph::JSONTransport.stub!(:request)
     end
 
-    it "should perform a authorized request" do
+    it "should perform a authorized json request on default" do
       AllegroGraph::JSONTransport.should_receive(:request).with(
         :get, "http://localhost:10035/", hash_including(:expected_status_code => 200)
       ).and_return("test" => "test")
       @server.request(:get, "/", :expected_status_code => 200).should == { "test" => "test" }
+    end
+
+    it "should perform a authorized text request if requested" do
+      AllegroGraph::AuthorizedTransport.should_receive(:request).with(
+        :get, "http://localhost:10035/", hash_including(:expected_status_code => 200)
+      ).and_return("test" => "test")
+      @server.request(:get, "/", :expected_status_code => 200, :type => :text).should == { "test" => "test" }
     end
 
   end

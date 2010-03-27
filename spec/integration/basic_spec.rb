@@ -67,4 +67,18 @@ describe "integration" do
 
   end
 
+  describe "repository size" do
+
+    before :each do
+      @server = AllegroGraph::Server.new :username => "test", :password => "test"
+      @repository = AllegroGraph::Repository.new @server, "test_repository"
+      @repository.create_if_missing!
+    end
+
+    it "should return the number of statements" do
+      @repository.size.should == 0
+    end
+
+  end
+
 end

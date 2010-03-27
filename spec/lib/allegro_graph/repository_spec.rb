@@ -163,4 +163,24 @@ describe AllegroGraph::Repository do
 
   end
 
+  describe "size" do
+
+    it "should return the number of statements" do
+      @repository.size.should == 3
+    end
+    
+  end
+
+  describe "add_statement" do
+
+    before :each do
+      @subject    = "test_subject"
+      @predicate  = "test_predicate"
+      @object     = "test_object"
+    end
+
+    
+
+  end
+
 end

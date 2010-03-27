@@ -50,6 +50,11 @@ module AllegroGraph
       delete! if exists?
     end
 
+    def size
+      response = @server.request :get, self.path + "/size", :type => :text, :expected_status_code => 200
+      response.to_i
+    end
+
   end
 
 end

@@ -50,8 +50,12 @@ describe AllegroGraph::Server do
 
   describe "catalogs" do
 
+    before :each do
+      @catalog = AllegroGraph::Catalog.new @server, "test_catalog"
+    end
+
     it "should return the catalogs of the server" do
-      @server.catalogs.should == [ @server.root_catalog ]
+      @server.catalogs.should == [ @server.root_catalog, @catalog ]
     end
 
   end

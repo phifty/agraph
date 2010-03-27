@@ -43,6 +43,10 @@ module AllegroGraph
     def catalogs
       result = [ @root_catalog ]
       catalogs = self.request :get, "/catalogs", :expected_status_code => 200
+      catalogs.each do |catalog|
+        id = catalog["id"]
+        result << Catalog.new(self, id.sub(/^\//, "")) unless id == "/"
+      end
       result
     end
 

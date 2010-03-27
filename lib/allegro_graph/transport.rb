@@ -84,6 +84,7 @@ module AllegroGraph
   module JSONTransport
 
     def self.request(http_method, url, options = { })
+      # puts http_method.to_s + " " + url
       options[:headers] ||= { }
       options[:headers]["Accept"] = "application/json"
       options[:headers]["Content-Type"] = "application/json"
@@ -96,7 +97,10 @@ module AllegroGraph
 
     def self.parse(response)
       return nil if response.nil? || response == ""
+      # puts response
       JSON.parse response
+    rescue JSON::ParserError => error
+      nil
     end
 
   end

@@ -66,34 +66,32 @@ describe "integration" do
 
   end
 
-  describe "a repository" do
+  describe "statements" do
 
     before :each do
       @repository.create_if_missing!
-    end
-    
-    it "should have a size of zero" do
-      @repository.size.should == 0
+      @statements = @repository.statements
     end
 
-    it "should take a statement" do
-      @repository.create_statement("\"test_subject\"", "\"test_predicate\"", "\"test_object\"", "\"test_context\"").should be_true
-    end
+    describe "creation" do
 
-    context "filled with statements" do
-
-      before :each do
-        @repository.delete_statements
-        @repository.create_statement "\"test_subject\"", "\"test_predicate\"", "\"test_object\"", "\"test_context\""
-        @repository.create_statement "\"another_subject\"", "\"test_predicate\"", "\"another_object\"", "\"test_context\""
+      it "should take a statement" do
+        result = @statements.create "\"test_subject\"", "\"test_predicate\"", "\"test_object\"", "\"test_context\""
+        result.should be_true
       end
 
-      it "should have a size of two or more" do
-        @repository.size.should >= 2
+    end
+
+    describe "finding" do
+
+      before :each do
+        @statements.delete
+        @statements.create "\"test_subject\"", "\"test_predicate\"", "\"test_object\"", "\"test_context\""
+        @statements.create "\"another_subject\"", "\"test_predicate\"", "\"another_object\"", "\"test_context\""
       end
 
       it "should find all statements" do
-        statements = @repository.find_statements
+        statements = @statements.find
         statements.should == [
           [ "\"test_subject\"", "\"test_predicate\"", "\"test_object\"", "\"test_context\"" ],
           [ "\"another_subject\"", "\"test_predicate\"", "\"another_object\"", "\"test_context\"" ]
@@ -101,10 +99,24 @@ describe "integration" do
       end
 
       it "should find statements by filter options" do
-        statements = @repository.find_statements :subject => "test_subject"
+        statements = @statements.find :subject => "test_subject"
         statements.should == [
           [ "\"test_subject\"", "\"test_predicate\"", "\"test_object\"", "\"test_context\"" ]
         ]
+      end
+
+    end
+
+    describe "deletion" do
+
+      before :each do
+        @statements.create "\"test_subject\"", "\"test_predicate\"", "\"test_object\"", "\"test_context\""        
+      end
+
+      it "should delete all statements" do
+        lambda do
+          @statements.delete
+        end.should change(@repository, :size).to(0)
       end
 
     end

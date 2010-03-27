@@ -88,3 +88,26 @@
   :response:
     :code:      "204"
     :body:      "1"
+-
+  :http_method: "get"
+  :url:         "http://localhost:10035/catalogs/test_catalog/repositories/test_repository/statements"
+  :response:
+    :code:      "200"
+    :body:
+      - [ "\"test_subject\"", "\"test_predicate\"", "\"test_object\"", "\"test_context\"" ]
+      - [ "\"another_subject\"", "\"test_predicate\"", "\"another_object\"", "\"test_context\"" ]
+-
+  :http_method: "get"
+  :url:         "http://localhost:10035/catalogs/test_catalog/repositories/test_repository/statements"
+  :parameters:
+    :subj:  "test_subject"
+  :response:
+    :code:      "200"
+    :body:
+      - [ "\"test_subject\"", "\"test_predicate\"", "\"test_object\"", "\"test_context\"" ]
+-
+  :http_method: "delete"
+  :url:         "http://localhost:10035/catalogs/test_catalog/repositories/test_repository/statements"
+  :response:
+    :code:      "200"
+    :body:      ""

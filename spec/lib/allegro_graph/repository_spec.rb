@@ -171,18 +171,4 @@ describe AllegroGraph::Repository do
     
   end
 
-  describe "create_statement" do
-
-    before :each do
-      @subject    = "test_subject"
-      @predicate  = "test_predicate"
-      @object     = "test_object"
-    end
-
-    it "should create a statement" do
-      @repository.create_statement(@subject, @predicate, @object).should be_true
-    end
-
-  end
-
 end

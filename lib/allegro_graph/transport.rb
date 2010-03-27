@@ -6,101 +6,146 @@ require 'json'
 module AllegroGraph
 
   # Common transport layer for http transfers.
-  module Transport
+  class Transport
+
+    attr_reader :http_method
+    attr_reader :url
+    attr_reader :options
+    attr_reader :headers
+    attr_reader :parameters
+    attr_reader :body
+    attr_reader :response
+
+    def initialize(http_method, url, options = { })
+      @http_method  = http_method
+      @uri          = URI.parse url
+      @headers      = options[:headers]     || { }
+      @parameters   = options[:parameters]  || { }
+      @body         = options[:body]
+    end
+
+    def perform
+      initialize_request_class
+      initialize_request_path
+      initialize_request_object
+      perform_request
+    end
+
+    private
+
+    def initialize_request_class
+      request_class_name = @http_method.capitalize
+      raise NotImplementedError, "the request method #{http_method} is not implemented" unless Net::HTTP.const_defined?(request_class_name)
+      @request_class = Net::HTTP.const_get request_class_name
+    end
+
+    def initialize_request_path
+      serialize_parameters
+      @request_path = @uri.path + @serialized_parameters
+    end
+
+    def serialize_parameters
+      @serialized_parameters = if @parameters.nil? || @parameters.empty?
+        ""
+      else
+        "?" + @parameters.collect{ |key, value| "#{key}=#{URI.escape(value)}" }.reverse.join("&")
+      end
+    end
+    
+    def initialize_request_object
+      @request = @request_class.new @request_path, @headers
+      @request.body = @body if @body
+    end
+
+    def perform_request
+      @response = Net::HTTP.start(@uri.host, @uri.port) do |connection|
+        connection.request @request
+      end
+    end
+
+    def self.request(http_method, url, options = { })
+      transport = new http_method, url, options
+      transport.perform
+      transport.response
+    end
+
+  end
+
+  class ExtendedTransport < Transport
 
     # The UnexpectedStatusCodeError is raised if the :expected_status_code option is given to
     # the :request method and the responded status code is different from the expected one.
     class UnexpectedStatusCodeError < StandardError
 
       attr_reader :status_code
+      attr_reader :message
 
-      def initialize(status_code)
-        @status_code = status_code
+      def initialize(status_code, message = nil)
+        @status_code, @message = status_code, message
       end
 
       def to_s
-        "#{super} received status code #{self.status_code}"
+        "#{super} received status code #{self.status_code}" + (@message ? " [#{@message}]" : "")
       end
 
     end
 
-    def self.request(http_method, url, options = { })
-      expected_status_code = options[:expected_status_code]
-
-      uri = URI.parse url
-      response = perform request_object(http_method, uri, options), uri
-
-      check_status_code response, expected_status_code if expected_status_code
-      response.body
-    end
-
-    def self.request_object(http_method, uri, options)
-      request_class_name = http_method.capitalize
-      raise NotImplementedError, "the request method #{http_method} is not implemented" unless Net::HTTP.const_defined?(request_class_name)
-
-      request_class = Net::HTTP.const_get request_class_name
-      request_object = request_class.new uri.path + serialize_parameters(options[:parameters]), (options[:headers] || { })
-      request_object.body = options[:body].to_json if options.has_key?(:body)
-      request_object
-    end
-
-    def self.serialize_parameters(parameters)
-      return "" if parameters.nil? || parameters.empty?
-      "?" + parameters.collect do |key, value|
-        "#{key}=#{URI.escape(serialize_parameter_value(value))}"
-      end.reverse.join("&")
-    end
-
-    def self.serialize_parameter_value(value)
-      value.to_s
-    end
-
-    def self.perform(request, uri)
-      Net::HTTP.start(uri.host, uri.port) do |connection|
-        connection.request request
-      end
-    end
-
-    def self.check_status_code(response, expected_status_code)
-      response_code = response.code
-      raise UnexpectedStatusCodeError, response_code.to_i if expected_status_code.to_s != response_code
-    end
-
-  end
-
-  module AuthorizedTransport
-
-    def self.request(http_method, url, options = { })
-      if options[:auth_type] == :basic
-        options[:headers] ||= { }
-        options[:headers]["Authorization"] = "Basic " + Base64.encode64("#{options[:username]}:#{options[:password]}")
-      end
-      Transport.request http_method, url, options
-    end
+    attr_reader :expected_status_code
+    attr_reader :auth_type
+    attr_reader :username
+    attr_reader :password
     
-  end
-
-  # Common json transport layer for http transfers.
-  module JSONTransport
-
-    def self.request(http_method, url, options = { })
-      # puts http_method.to_s + " " + url
-      options[:headers] ||= { }
-      options[:headers]["Accept"] = "application/json"
-      options[:headers]["Content-Type"] = "application/json"
-      parse AuthorizedTransport.request(http_method, url, options)
+    def initialize(http_method, url, options = { })
+      super http_method, url, options
+      @expected_status_code = options[:expected_status_code]
+      @auth_type            = options[:auth_type]
+      @username             = options[:username]
+      @password             = options[:password]
     end
 
-    def self.serialize_parameter_value(value)
-      value.respond_to?(:to_json) ? value.to_json : AuthorizedTransport.serialize_parameter_value(value)
+    def perform
+      initialize_headers
+      super
+      check_status_code
+      parse_response
     end
 
-    def self.parse(response)
-      return nil if response.nil? || response == ""
-      # puts response
-      JSON.parse response
-    rescue JSON::ParserError => error
-      nil
+    private
+
+    def initialize_headers
+      if @auth_type == :basic
+        @headers["Authorization"] = "Basic " + Base64.encode64("#{@username}:#{@password}")
+      elsif !@auth_type.nil?
+        raise NotImplementedError, "the given auth_type [#{@auth_type}] is not implemented"
+      end
+      @headers["Accept"]        = "application/json"
+      @headers["Content-Type"]  = "application/json"
+    end
+
+    def serialize_parameters
+      @parameters.each do |key, value|
+        @parameters[key] = value.to_json if value.respond_to?(:to_json)
+      end
+      super
+    end
+
+    def initialize_request_object
+      super
+      @request.body = @body.to_json if @body
+    end
+
+    def check_status_code
+      return unless @expected_status_code
+      response_code = @response.code
+      response_body = @response.body
+      raise UnexpectedStatusCodeError, response_code.to_i, response_body if @expected_status_code.to_s != response_code
+    end
+
+    def parse_response
+      return nil if @response.body.nil?
+      @response = JSON.parse @response.body
+    rescue JSON::ParserError
+      @response = @response.body.to_s
     end
 
   end

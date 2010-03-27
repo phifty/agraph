@@ -70,35 +70,10 @@ describe AllegroGraph::Catalog do
 
   end
 
-  describe "create!" do
-
-    context "for a catalog that already exists" do
-
-      it "should return false" do
-        @catalog.create!.should be_false
-      end
-      
-    end
-
-    context "for a catalog that not exists" do
-
-      before :each do
-        @catalog.name = "not_existing"
-      end
-      
-      it "should return true" do
-        @catalog.create!.should be_false
-      end
-
-    end
-
-  end
-
   describe "repositories" do
 
     before :each do
       @repository = AllegroGraph::Repository.new @catalog, "test_repository"
-
     end
 
     it "should return the catalog's repositories" do

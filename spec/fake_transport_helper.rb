@@ -11,7 +11,7 @@ module FakeTransport
   end
 
   def self.transport_class
-    AllegroGraph::Transport
+    AllegroGraph::ExtendedTransport
   end
 
   def self.fake!

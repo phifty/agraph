@@ -24,21 +24,14 @@ describe AllegroGraph::Server do
   describe "request" do
 
     before :each do
-      AllegroGraph::JSONTransport.stub!(:request)
+      AllegroGraph::ExtendedTransport.stub!(:request)
     end
 
-    it "should perform a authorized json request on default" do
-      AllegroGraph::JSONTransport.should_receive(:request).with(
+    it "should perform an extended request" do
+      AllegroGraph::ExtendedTransport.should_receive(:request).with(
         :get, "http://localhost:10035/", hash_including(:expected_status_code => 200)
       ).and_return("test" => "test")
       @server.request(:get, "/", :expected_status_code => 200).should == { "test" => "test" }
-    end
-
-    it "should perform a authorized text request if requested" do
-      AllegroGraph::AuthorizedTransport.should_receive(:request).with(
-        :get, "http://localhost:10035/", hash_including(:expected_status_code => 200)
-      ).and_return("test" => "test")
-      @server.request(:get, "/", :expected_status_code => 200, :type => :text).should == { "test" => "test" }
     end
 
   end

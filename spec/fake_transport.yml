@@ -1,112 +1,90 @@
 -
   :http_method: "get"
   :url:         "http://localhost:10035/version"
-  :headers:
-    "Authorization":  "Basic dGVzdDp0ZXN0\n"
   :response:
     :code:      "200"
     :body:      "4.0.1a"
 -
   :http_method: "get"
   :url:         "http://localhost:10035/version/date"
-  :headers:
-    "Authorization":  "Basic dGVzdDp0ZXN0\n"
   :response:
     :code:      "200"
     :body:      "March 10, 2010 10:23:52 GMT-0800"
 -
   :http_method: "get"
   :url:         "http://localhost:10035/version/revision"
-  :headers:
-    "Authorization":  "Basic dGVzdDp0ZXN0\n"
   :response:
     :code:      "200"
     :body:      "[unknown]"
 -
   :http_method: "get"
   :url:         "http://localhost:10035/catalogs"
-  :headers:
-    "Authorization":  "Basic dGVzdDp0ZXN0\n"
-    "Content-Type":   "application/json"
-    "Accept":         "application/json"
   :response:
     :code:      "200"
-    :body:      "[{\"id\":\"/\",\"uri\":\"http://localhost:10035\"},{\"id\":\"/test_catalog\",\"uri\":\"http://localhost:10035/test_catalog\"}]"
+    :body:
+      -
+        "id":   "/"
+        "uri":  "http://localhost:10035"
+      -
+        "id":   "/test_catalog"
+        "uri":  "http://localhost:10035/test_catalog"
 -
   :http_method: "put"
   :url:         "http://localhost:10035/catalogs/test_catalog"
-  :headers:
-    "Authorization":  "Basic dGVzdDp0ZXN0\n"
-    "Content-Type":   "application/json"
-    "Accept":         "application/json"
   :response:
     :code:      "400"
     :body:      ""
 -
   :http_method: "put"
   :url:         "http://localhost:10035/catalogs/not_existing"
-  :headers:
-    "Authorization":  "Basic dGVzdDp0ZXN0\n"
-    "Content-Type":   "application/json"
-    "Accept":         "application/json"
   :response:
     :code:      "201"
     :body:      ""
 -
   :http_method: "get"
   :url:         "http://localhost:10035/catalogs/test_catalog/repositories"
-  :headers:
-    "Authorization":  "Basic dGVzdDp0ZXN0\n"
-    "Content-Type":   "application/json"
-    "Accept":         "application/json"
   :response:
     :code:      "200"
-    :body:      "[{\"uri\":\"http://localhost:10035/repositories/test_repository\",\"id\":\"test_repository\",\"title\":\"test_repository\",\"readable\":true,\"writable\":true}]"
+    :body:
+      -
+        "uri":      "http://localhost:10035/repositories/test_repository"
+        "id":       "test_repository"
+        "title":    "test_repository"
+        "readable": true
+        "writable": true
 -
   :http_method: "put"
   :url:         "http://localhost:10035/catalogs/test_catalog/repositories/test_repository"
-  :headers:
-    "Authorization":  "Basic dGVzdDp0ZXN0\n"
-    "Content-Type":   "application/json"
-    "Accept":         "application/json"
   :response:
     :code:      "400"
     :body:      ""
 -
   :http_method: "delete"
   :url:         "http://localhost:10035/catalogs/test_catalog/repositories/test_repository"
-  :headers:
-    "Authorization":  "Basic dGVzdDp0ZXN0\n"
-    "Content-Type":   "application/json"
-    "Accept":         "application/json"
   :response:
     :code:      "200"
     :body:      ""
 -
   :http_method: "put"
   :url:         "http://localhost:10035/catalogs/test_catalog/repositories/not_existing"
-  :headers:
-    "Authorization":  "Basic dGVzdDp0ZXN0\n"
-    "Content-Type":   "application/json"
-    "Accept":         "application/json"
   :response:
     :code:      "204"
     :body:      ""
 -
   :http_method: "delete"
   :url:         "http://localhost:10035/catalogs/test_catalog/repositories/not_existing"
-  :headers:
-    "Authorization":  "Basic dGVzdDp0ZXN0\n"
-    "Content-Type":   "application/json"
-    "Accept":         "application/json"
   :response:
     :code:      "400"
     :body:      ""
 -
   :http_method: "get"
   :url:         "http://localhost:10035/catalogs/test_catalog/repositories/test_repository/size"
-  :headers:
-    "Authorization":  "Basic dGVzdDp0ZXN0\n"
   :response:
     :code:      "200"
     :body:      "3"
+-
+  :http_method: "post"
+  :url:         "http://localhost:10035/catalogs/test_catalog/repositories/test_repository/statements"
+  :response:
+    :code:      "204"
+    :body:      "1"

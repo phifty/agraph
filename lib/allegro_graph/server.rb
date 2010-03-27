@@ -26,22 +26,14 @@ module AllegroGraph
     end
 
     def request(http_method, path, options = { })
-      type = options[:type] || :json
-      case type
-        when :text
-          request_text http_method, path, options
-        when :json
-          request_json http_method, path, options
-        else
-          raise NotImplementedError, "the request type '#{type}' is not implemented"
-      end
+      ExtendedTransport.request http_method, self.url + path, credentials.merge(options)
     end
 
     def version
       {
-        :version  => self.request(:get, "/version",          :type => :text, :expected_status_code => 200),
-        :date     => self.request(:get, "/version/date",     :type => :text, :expected_status_code => 200),
-        :revision => self.request(:get, "/version/revision", :type => :text, :expected_status_code => 200)
+        :version  => self.request(:get, "/version",          :expected_status_code => 200),
+        :date     => self.request(:get, "/version/date",     :expected_status_code => 200),
+        :revision => self.request(:get, "/version/revision", :expected_status_code => 200)
       }
     end
 
@@ -61,16 +53,8 @@ module AllegroGraph
 
     private
 
-    def request_text(http_method, path, options)
-      AuthorizedTransport.request http_method, self.url + path, credentials.merge(options)
-    end
-
-    def request_json(http_method, path, options)
-      JSONTransport.request http_method, self.url + path, credentials.merge(options)
-    end
-
     def credentials
-      { :auth_type => :basic, :username => self.username, :password => self.password }
+      { :auth_type => :basic, :username => @username, :password => @password }
     end
 
   end

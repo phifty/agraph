@@ -29,14 +29,6 @@ module AllegroGraph
       @server.catalogs.include? self
     end
 
-    def create!
-      raise StandardError, "cannot create root catalog!" if self.root?
-      @server.request :put, self.path, :expected_status_code => 201
-    rescue AllegroGraph::Transport::UnexpectedStatusCodeError => error
-      return false if error.status_code == 400
-      raise error
-    end
-
     def repositories
       repositories = @server.request :get, self.path + "/repositories", :expected_status_code => 200
       repositories.map { |repository| Repository.new self, repository["id"] }

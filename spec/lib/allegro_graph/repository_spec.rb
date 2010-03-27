@@ -171,7 +171,7 @@ describe AllegroGraph::Repository do
     
   end
 
-  describe "add_statement" do
+  describe "create_statement" do
 
     before :each do
       @subject    = "test_subject"
@@ -179,7 +179,9 @@ describe AllegroGraph::Repository do
       @object     = "test_object"
     end
 
-    
+    it "should create a statement" do
+      @repository.create_statement(@subject, @predicate, @object).should be_true
+    end
 
   end
 

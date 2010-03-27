@@ -1,4 +1,5 @@
 require 'uri'
+require 'cgi'
 require 'net/http'
 require 'base64'
 require 'json'
@@ -48,7 +49,7 @@ module AllegroGraph
       @serialized_parameters = if @parameters.nil? || @parameters.empty?
         ""
       else
-        "?" + @parameters.collect{ |key, value| "#{key}=#{URI.escape(value)}" }.reverse.join("&")
+        "?" + @parameters.collect{ |key, value| "#{key}=#{CGI.escape(value)}" }.reverse.join("&")
       end
     end
     
@@ -80,7 +81,7 @@ module AllegroGraph
       attr_reader :status_code
       attr_reader :message
 
-      def initialize(status_code, message = nil)
+      def initialize(status_code, message)
         @status_code, @message = status_code, message
       end
 
@@ -122,13 +123,6 @@ module AllegroGraph
       @headers["Content-Type"]  = "application/json"
     end
 
-    def serialize_parameters
-      @parameters.each do |key, value|
-        @parameters[key] = value.to_json if value.respond_to?(:to_json)
-      end
-      super
-    end
-
     def initialize_request_object
       super
       @request.body = @body.to_json if @body
@@ -138,7 +132,7 @@ module AllegroGraph
       return unless @expected_status_code
       response_code = @response.code
       response_body = @response.body
-      raise UnexpectedStatusCodeError, response_code.to_i, response_body if @expected_status_code.to_s != response_code
+      raise UnexpectedStatusCodeError.new(response_code.to_i, response_body) if @expected_status_code.to_s != response_code
     end
 
     def parse_response

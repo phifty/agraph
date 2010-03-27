@@ -99,7 +99,7 @@ describe "integration" do
       end
 
       it "should find statements by filter options" do
-        statements = @statements.find :subject => "test_subject"
+        statements = @statements.find :subject => "\"test_subject\""
         statements.should == [
           [ "\"test_subject\"", "\"test_predicate\"", "\"test_object\"", "\"test_context\"" ]
         ]
@@ -121,6 +121,28 @@ describe "integration" do
 
     end
     
+  end
+
+  describe "sparql" do
+
+    before :each do
+      @repository.create_if_missing!
+
+      statements = @repository.statements
+      statements.create "\"test_subject\"", "<http://xmlns.com/foaf/0.1/knows>", "\"test_object\"", "\"test_context\""
+      statements.create "\"another_subject\"", "<http://xmlns.com/foaf/0.1/knows>", "\"another_object\"", "\"test_context\""
+
+      @sparql = @repository.sparql
+    end
+
+    it "should respond to queried data" do
+      result = @sparql.perform "SELECT ?subject WHERE { ?subject <http://xmlns.com/foaf/0.1/knows> ?object . }"
+      result.should == {
+        "names"   => [ "subject" ],
+        "values"  => [ [ "\"another_subject\"" ], [ "\"test_subject\"" ] ]
+      }
+    end
+
   end
 
 end

@@ -1,5 +1,6 @@
 require File.join(File.dirname(__FILE__), "server")
 require File.join(File.dirname(__FILE__), "proxy", "statements")
+require File.join(File.dirname(__FILE__), "proxy", "sparql")
 
 module AllegroGraph
 
@@ -9,12 +10,14 @@ module AllegroGraph
     attr_reader   :catalog
     attr_accessor :name
     attr_reader   :statements
+    attr_reader   :sparql
 
     def initialize(server_or_catalog, name, options = { })
       @catalog    = server_or_catalog.is_a?(AllegroGraph::Server) ? server_or_catalog.root_catalog : server_or_catalog
       @server     = @catalog.server
       @name       = name
       @statements = Proxy::Statements.new self
+      @sparql     = Proxy::SparQL.new self
     end
 
     def ==(other)

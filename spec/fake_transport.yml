@@ -111,3 +111,16 @@
   :response:
     :code:      "200"
     :body:      ""
+-
+  :http_method: "get"
+  :url:         "http://localhost:10035/catalogs/test_catalog/repositories/test_repository"
+  :parameters:
+    :query:   "SELECT ?subject WHERE { ?subject <http://xmlns.com/foaf/0.1/knows> ?object . }"
+    :queryLn: "sparql"
+  :response:
+    :code:      "200"
+    :body:
+      "names":  [ "subject" ]
+      "values":
+        - [ "\"another_subject\"" ]
+        - [ "\"test_subject\"" ]

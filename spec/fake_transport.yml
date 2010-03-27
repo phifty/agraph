@@ -17,11 +17,32 @@
     :code:      "200"
     :body:      "[unknown]"
 -
+  :http_method: "put"
+  :url:         "http://localhost:10035/catalogs/existing"
+  :headers:
+    "Authorization":  "Basic dGVzdDp0ZXN0\n"
+    "Content-Type":   "application/json"
+    "Accept":         "application/json"
+  :response:
+    :code:      "400"
+    :body:      ""
+-
+  :http_method: "put"
+  :url:         "http://localhost:10035/catalogs/not_existing"
+  :headers:
+    "Authorization":  "Basic dGVzdDp0ZXN0\n"
+    "Content-Type":   "application/json"
+    "Accept":         "application/json"
+  :response:
+    :code:      "201"
+    :body:      ""
+-
   :http_method: "get"
   :url:         "http://localhost:10035/catalogs"
   :headers:
     "Authorization":  "Basic dGVzdDp0ZXN0\n"
     "Content-Type":   "application/json"
+    "Accept":         "application/json"
   :response:
     :code:      "200"
     :body:      ""

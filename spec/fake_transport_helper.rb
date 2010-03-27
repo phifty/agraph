@@ -30,7 +30,7 @@ module FakeTransport
           hash[:headers] == headers
       end
       raise StandardError, "no fake request found for [#{http_method} #{url} #{parameters.inspect} #{headers.inspect}]" unless request
-      raise UnexpectedStatusCodeError, request[:response][:code].to_i if expected_status_code && expected_status_code.to_s != request[:response][:code]
+      raise transport_class::UnexpectedStatusCodeError, request[:response][:code].to_i if expected_status_code && expected_status_code.to_s != request[:response][:code]
       request[:response][:body].dup
     end
   end

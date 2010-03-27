@@ -4,7 +4,7 @@ require File.expand_path(File.join(File.dirname(__FILE__), "..", "..", "..", "li
 describe AllegroGraph::Catalog do
 
   before :each do
-    @server = AllegroGraph::Server.new
+    @server = AllegroGraph::Server.new :username => "test", :password => "test"
     @catalog = AllegroGraph::Catalog.new @server, "test_catalog"
   end
 
@@ -22,7 +22,7 @@ describe AllegroGraph::Catalog do
 
   end
 
-  describe "url" do
+  describe "path" do
 
     context "for root catalog" do
 
@@ -31,7 +31,7 @@ describe AllegroGraph::Catalog do
       end
 
       it "should the root catalog url" do
-        @catalog.url.should == "#{@server.url}"
+        @catalog.path.should == ""
       end
 
     end
@@ -39,7 +39,35 @@ describe AllegroGraph::Catalog do
     context "for named catalog" do
 
       it "should the named catalog url" do
-        @catalog.url.should == "#{@server.url}/catalogs/test_catalog"
+        @catalog.path.should == "/catalogs/test_catalog"
+      end
+
+    end
+
+  end
+
+  describe "create!" do
+
+    context "for a catalog that already exists" do
+
+      before :each do
+        @catalog.name = "existing"
+      end
+
+      it "should return false" do
+        @catalog.create!.should be_false
+      end
+      
+    end
+
+    context "for a catalog that not exists" do
+
+      before :each do
+        @catalog.name = "not_existing"
+      end
+      
+      it "should return true" do
+        @catalog.create!.should be_false
       end
 
     end

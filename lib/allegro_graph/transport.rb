@@ -85,6 +85,7 @@ module AllegroGraph
 
     def self.request(http_method, url, options = { })
       options[:headers] ||= { }
+      options[:headers]["Accept"] = "application/json"
       options[:headers]["Content-Type"] = "application/json"
       parse AuthorizedTransport.request(http_method, url, options)
     end

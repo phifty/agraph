@@ -92,7 +92,7 @@ describe AllegroGraph::JSONTransport do
 
     it "should call Transport.request with extended headers" do
       AllegroGraph::AuthorizedTransport.should_receive(:request).with(
-        :get, "/", hash_including(:headers => { "Content-Type" => "application/json" })
+        :get, "/", hash_including(:headers => { "Accept" => "application/json", "Content-Type" => "application/json" })
       )
       AllegroGraph::JSONTransport.request :get, "/"
     end

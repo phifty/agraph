@@ -68,6 +68,17 @@ module AllegroGraph
         @server.request :get, self.path + "/box", :parameters => parameters, :expected_status_code => 200
       end
 
+      def inside_circle(type, predicate, x, y, radius)
+        parameters = {
+          :type       => type,
+          :predicate  => predicate,
+          :x          => x.to_s,
+          :y          => y.to_s,
+          :radius     => radius.to_s
+        }
+        @server.request :get, self.path + "/circle", :parameters => parameters, :expected_status_code => 200
+      end
+
     end
 
   end

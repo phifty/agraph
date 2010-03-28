@@ -208,9 +208,12 @@ describe "integration" do
 
       it "should find objects inside a box" do
         result = @geo.inside_box @type, "\"at\"", 8.0, 8.0, 11.0, 11.0
-        result.should == [
-          [ "\"test_subject\"", "\"at\"", "\"+10.000000000931323+10.000000000931323\"^^<http://franz.com/ns/allegrograph/3.0/geospatial/cartesian/2.0/20.0/2.0/20.0/1.0>"]
-        ]
+        result.should include([ "\"test_subject\"", "\"at\"", "\"+10.000000000931323+10.000000000931323\"^^<http://franz.com/ns/allegrograph/3.0/geospatial/cartesian/2.0/20.0/2.0/20.0/1.0>"])
+      end
+
+      it "should find objects inside a circle" do
+        result = @geo.inside_circle @type, "\"at\"", 9.0, 9.0, 2.0
+        result.should include([ "\"test_subject\"", "\"at\"", "\"+10.000000000931323+10.000000000931323\"^^<http://franz.com/ns/allegrograph/3.0/geospatial/cartesian/2.0/20.0/2.0/20.0/1.0>"])
       end
 
     end

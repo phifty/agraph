@@ -68,4 +68,13 @@ describe AllegroGraph::Proxy::Geo do
 
   end
 
+  describe "inside_haversine" do
+
+    it "should find objects inside a haversine" do
+      result = @geo.inside_haversine @type, "\"at\"", 9.0, 9.0, 200.0, :km
+      result.should include([ "\"test_subject\"", "\"at\"", "\"+100000+0100000\"^^<http://franz.com/ns/allegrograph/3.0/geospatial/spherical/degrees/2.0/20.0/2.0/20.0/1.0>"])
+    end
+
+  end
+
 end

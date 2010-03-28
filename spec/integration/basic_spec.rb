@@ -199,7 +199,7 @@ describe "integration" do
       
     end
 
-    context "with statements" do
+    context "in a cartesian system" do
 
       before :each do
         @type = @geo.cartesian_type 1.0, 2.0, 2.0, 20.0, 20.0
@@ -214,6 +214,20 @@ describe "integration" do
       it "should find objects inside a circle" do
         result = @geo.inside_circle @type, "\"at\"", 9.0, 9.0, 2.0
         result.should include([ "\"test_subject\"", "\"at\"", "\"+10.000000000931323+10.000000000931323\"^^<http://franz.com/ns/allegrograph/3.0/geospatial/cartesian/2.0/20.0/2.0/20.0/1.0>"])
+      end
+
+    end
+
+    context "in a spherical system" do
+
+      before :each do
+        @type = @geo.spherical_type 1.0, :degree, 2.0, 2.0, 20.0, 20.0
+        @repository.statements.create "\"test_subject\"", "\"at\"", "\"+10.00+010.00\"^^#{@type}"
+      end
+
+      it "should find objects inside a haversine" do
+        result = @geo.inside_haversine @type, "\"at\"", 9.0, 9.0, 200.0, :km
+        result.should include([ "\"test_subject\"", "\"at\"", "\"+100000+0100000\"^^<http://franz.com/ns/allegrograph/3.0/geospatial/spherical/degrees/2.0/20.0/2.0/20.0/1.0>"])
       end
 
     end

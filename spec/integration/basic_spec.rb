@@ -163,4 +163,28 @@ describe "integration" do
 
   end
 
+  describe "geo" do
+
+    before :each do
+      @repository.create_if_missing!
+
+      @geo = @repository.geo
+    end
+
+    describe "types" do
+
+      it "should provide a cartesian type" do
+        result = @geo.cartesian_type 1.0, 2.0, 20.0, 2.0, 20.0
+        result.should == "\"<http://franz.com/ns/allegrograph/3.0/geospatial/cartesian/2.0/20.0/2.0/20.0/1.0>\""
+      end
+
+      it "should provide a spherical type" do
+        result = @geo.spherical_type 1.0, :degree, 2.0, 20.0, 2.0, 20.0
+        result.should == "\"<http://franz.com/ns/allegrograph/3.0/geospatial/spherical/degrees/2.0/20.0/2.0/20.0/1.0>\""
+      end
+      
+    end
+
+  end
+
 end

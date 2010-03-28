@@ -28,7 +28,8 @@ module AllegroGraph
     def perform
       initialize_request_class
       initialize_request_path
-      initialize_request_object
+      initialize_request
+      initialize_request_body
       perform_request
     end
 
@@ -45,17 +46,32 @@ module AllegroGraph
       @request_path = @uri.path + @serialized_parameters
     end
 
+    def quote_parameters
+      @quoted_parameters = { }
+      @parameters.each{ |key, value| @quoted_parameters[ key.to_s ] = CGI.escape(value) }
+    end
+
     def serialize_parameters
+      quote_parameters
       @serialized_parameters = if @parameters.nil? || @parameters.empty?
         ""
       else
-        "?" + @parameters.collect{ |key, value| "#{key}=#{CGI.escape(value)}" }.reverse.join("&")
+        "?" + @quoted_parameters.collect{ |key, value| "#{key}=#{value}" }.reverse.join("&")
       end
     end
     
-    def initialize_request_object
+    def initialize_request
       @request = @request_class.new @request_path, @headers
-      @request.body = @body if @body
+    end
+    
+    def initialize_request_body
+      return unless [ :post, :put ].include?(@http_method.to_sym)
+      if @body
+        @request.body = @body
+      else
+        quote_parameters
+        @request.set_form_data @quoted_parameters 
+      end
     end
 
     def perform_request
@@ -119,13 +135,15 @@ module AllegroGraph
       elsif !@auth_type.nil?
         raise NotImplementedError, "the given auth_type [#{@auth_type}] is not implemented"
       end
-      @headers["Accept"]        = "application/json"
-      @headers["Content-Type"]  = "application/json"
+      @headers["Accept"] = "application/json"
     end
 
-    def initialize_request_object
+    def initialize_request_body
       super
-      @request.body = @body.to_json if @body
+      if @body
+        @request.body = @body.to_json
+        @request["Content-Type"] = "application/json"
+      end
     end
 
     def check_status_code

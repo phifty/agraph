@@ -137,3 +137,28 @@
       "values":
         - [ "\"another_subject\"" ]
         - [ "\"test_subject\"" ]
+-
+  :http_method: "post"
+  :url:         "http://localhost:10035/catalogs/test_catalog/repositories/test_repository/geo/types/cartesian"
+  :parameters:
+    :stripWidth:  "1.0"
+    :xmin:        "2.0"
+    :xmax:        "20.0"
+    :ymin:        "2.0"
+    :ymax:        "20.0"
+  :response:
+    :code:      "200"
+    :body:      "\"<http://franz.com/ns/allegrograph/3.0/geospatial/cartesian/2.0/20.0/2.0/20.0/1.0>\""
+-
+  :http_method: "post"
+  :url:         "http://localhost:10035/catalogs/test_catalog/repositories/test_repository/geo/types/spherical"
+  :parameters:
+    :stripWidth:  "1.0"
+    :unit:        "degree"
+    :latmin:      "2.0"
+    :latmax:      "20.0"
+    :longmin:     "2.0"
+    :longmax:     "20.0"
+  :response:
+    :code:      "200"
+    :body:      "\"<http://franz.com/ns/allegrograph/3.0/geospatial/spherical/degrees/2.0/20.0/2.0/20.0/1.0>\""

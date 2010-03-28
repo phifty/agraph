@@ -17,12 +17,12 @@ module AllegroGraph
         "#{@repository.path}/geo"
       end
 
-      def cartesian_type(strip_width, x_min, x_max, y_min, y_max)
+      def cartesian_type(strip_width, x_min, y_min, x_max, y_max)
         parameters = {
           :stripWidth => strip_width.to_s,
           :xmin       => x_min.to_s,
-          :xmax       => x_max.to_s,
           :ymin       => y_min.to_s,
+          :xmax       => x_max.to_s,
           :ymax       => y_max.to_s
         }
         type = @server.request :post, self.path + "/types/cartesian", :parameters => parameters, :expected_status_code => 200
@@ -31,13 +31,13 @@ module AllegroGraph
         type
       end
 
-      def spherical_type(strip_width, unit, latitude_min, latitude_max, longitude_min, longitude_max)
+      def spherical_type(strip_width, unit, latitude_min, longitude_min, latitude_max, longitude_max)
         parameters = {
           :stripWidth => strip_width.to_s,
           :unit       => unit.to_s,
           :latmin     => latitude_min.to_s,
-          :latmax     => latitude_max.to_s,
           :longmin    => longitude_min.to_s,
+          :latmax     => latitude_max.to_s,
           :longmax    => longitude_max.to_s
         }
         type = @server.request :post, self.path + "/types/spherical", :parameters => parameters, :expected_status_code => 200
@@ -54,6 +54,18 @@ module AllegroGraph
         }
         @server.request :put, self.path + "/polygon", :parameters => parameters, :expected_status_code => 204
         true
+      end
+
+      def inside_box(type, predicate, x_min, y_min, x_max, y_max)
+        parameters = {
+          :type       => type,
+          :predicate  => predicate,
+          :xmin       => x_min.to_s,
+          :ymin       => y_min.to_s,
+          :xmax       => x_max.to_s,
+          :ymax       => y_max.to_s
+        }
+        @server.request :get, self.path + "/box", :parameters => parameters, :expected_status_code => 200
       end
 
     end

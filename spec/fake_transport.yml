@@ -175,3 +175,17 @@
   :response:
     :code:      "204"
     :body:      ""
+-
+  :http_method: "get"
+  :url:         "http://localhost:10035/catalogs/test_catalog/repositories/test_repository/geo/box"
+  :parameters:
+    :type:      "<http://franz.com/ns/allegrograph/3.0/geospatial/cartesian/2.0/20.0/2.0/20.0/1.0>"
+    :predicate: "\"at\""
+    :xmin:      "8.0"
+    :ymin:      "8.0"
+    :xmax:      "11.0"
+    :ymax:      "11.0"
+  :response:
+    :code:      "200"
+    :body:
+      - [ "\"test_subject\"", "\"at\"", "\"+10.000000000931323+10.000000000931323\"^^<http://franz.com/ns/allegrograph/3.0/geospatial/cartesian/2.0/20.0/2.0/20.0/1.0>" ]

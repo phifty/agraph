@@ -174,29 +174,45 @@ describe "integration" do
     describe "types" do
 
       it "should provide a cartesian type" do
-        result = @geo.cartesian_type 1.0, 2.0, 20.0, 2.0, 20.0
+        result = @geo.cartesian_type 1.0, 2.0, 2.0, 20.0, 20.0
         result.should == "<http://franz.com/ns/allegrograph/3.0/geospatial/cartesian/2.0/20.0/2.0/20.0/1.0>"
       end
 
       it "should provide a spherical type" do
-        result = @geo.spherical_type 1.0, :degree, 2.0, 20.0, 2.0, 20.0
+        result = @geo.spherical_type 1.0, :degree, 2.0, 2.0, 20.0, 20.0
         result.should == "<http://franz.com/ns/allegrograph/3.0/geospatial/spherical/degrees/2.0/20.0/2.0/20.0/1.0>"
       end
       
     end
 
-    describe "polygon" do
+    describe "creating polygon" do
 
       before :each do
-        @type = @geo.cartesian_type 1.0, 2.0, 20.0, 2.0, 20.0
-        @points = [ [ 2.0, 2.0 ], [ 10.0, 2.0 ], [ 10.0, 10.0 ], [ 2.0, 10.0 ] ]
+        @type = @geo.cartesian_type 1.0, 2.0, 2.0, 20.0, 20.0
+        @polygon = [ [ 2.0, 2.0 ], [ 10.0, 2.0 ], [ 10.0, 10.0 ], [ 2.0, 10.0 ] ]
       end
 
-      it "should create a polygon" do
-        result = @geo.create_polygon "test_polygon", @type, @points
+      it "should return true" do
+        result = @geo.create_polygon "test_polygon", @type, @polygon
         result.should be_true
       end
       
+    end
+
+    context "with statements" do
+
+      before :each do
+        @type = @geo.cartesian_type 1.0, 2.0, 2.0, 20.0, 20.0
+        @repository.statements.create "\"test_subject\"", "\"at\"", "\"+10+10\"^^#{@type}"
+      end
+
+      it "should find objects inside a box" do
+        result = @geo.inside_box @type, "\"at\"", 8.0, 8.0, 11.0, 11.0
+        result.should == [
+          [ "\"test_subject\"", "\"at\"", "\"+10.000000000931323+10.000000000931323\"^^<http://franz.com/ns/allegrograph/3.0/geospatial/cartesian/2.0/20.0/2.0/20.0/1.0>"]
+        ]
+      end
+
     end
 
   end

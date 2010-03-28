@@ -25,7 +25,10 @@ module AllegroGraph
           :ymin       => y_min.to_s,
           :ymax       => y_max.to_s
         }
-        @server.request :post, self.path + "/types/cartesian", :parameters => parameters, :expected_status_code => 200
+        type = @server.request :post, self.path + "/types/cartesian", :parameters => parameters, :expected_status_code => 200
+        type.sub! /^.*</, "<"
+        type.sub! />.*$/, ">"
+        type
       end
 
       def spherical_type(strip_width, unit, latitude_min, latitude_max, longitude_min, longitude_max)
@@ -37,7 +40,20 @@ module AllegroGraph
           :longmin    => longitude_min.to_s,
           :longmax    => longitude_max.to_s
         }
-        @server.request :post, self.path + "/types/spherical", :parameters => parameters, :expected_status_code => 200
+        type = @server.request :post, self.path + "/types/spherical", :parameters => parameters, :expected_status_code => 200
+        type.sub! /^.*</, "<"
+        type.sub! />.*$/, ">"
+        type
+      end
+
+      def create_polygon(name, type, points)
+        raise ArgumentError, "at least three points has to defined" unless points.is_a?(Array) && points.size >= 3
+        parameters = {
+          :resource => "\"#{name}\"",
+          :point    => points.map{ |point| "\"%+g%+g\"^^%s" % [ point[0], point[1], type ] }
+        }
+        @server.request :put, self.path + "/polygon", :parameters => parameters, :expected_status_code => 204
+        true
       end
 
     end

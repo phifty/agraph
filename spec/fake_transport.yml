@@ -162,3 +162,16 @@
   :response:
     :code:      "200"
     :body:      "\"<http://franz.com/ns/allegrograph/3.0/geospatial/spherical/degrees/2.0/20.0/2.0/20.0/1.0>\""
+-
+  :http_method: "put"
+  :url:         "http://localhost:10035/catalogs/test_catalog/repositories/test_repository/geo/polygon"
+  :parameters:
+    :resource:    "\"test_polygon\""
+    :point:
+      - "\"+2+2\"^^<http://franz.com/ns/allegrograph/3.0/geospatial/cartesian/2.0/20.0/2.0/20.0/1.0>"
+      - "\"+10+2\"^^<http://franz.com/ns/allegrograph/3.0/geospatial/cartesian/2.0/20.0/2.0/20.0/1.0>"
+      - "\"+10+10\"^^<http://franz.com/ns/allegrograph/3.0/geospatial/cartesian/2.0/20.0/2.0/20.0/1.0>"
+      - "\"+2+10\"^^<http://franz.com/ns/allegrograph/3.0/geospatial/cartesian/2.0/20.0/2.0/20.0/1.0>"
+  :response:
+    :code:      "204"
+    :body:      ""

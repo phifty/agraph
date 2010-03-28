@@ -46,17 +46,27 @@ module AllegroGraph
       @request_path = @uri.path + @serialized_parameters
     end
 
-    def quote_parameters
-      @quoted_parameters = { }
-      @parameters.each{ |key, value| @quoted_parameters[ key.to_s ] = CGI.escape(value) }
-    end
-
     def serialize_parameters
       quote_parameters
       @serialized_parameters = if @parameters.nil? || @parameters.empty?
         ""
       else
-        "?" + @quoted_parameters.collect{ |key, value| "#{key}=#{value}" }.reverse.join("&")
+        "?" + @quoted_parameters.collect do |key, value|
+          value.is_a?(Array) ?
+            value.map{ |element| "#{key}=#{element}" }.join("&") :
+            "#{key}=#{value}"
+        end.join("&")
+      end
+    end
+
+    def quote_parameters
+      @quoted_parameters = { }
+      @parameters.each do |key, value|
+        if value.is_a?(Array)
+          @quoted_parameters[ CGI.escape("#{key}") ] = value.map{ |element| CGI.escape element }
+        else
+          @quoted_parameters[ CGI.escape("#{key}") ] = CGI.escape value
+        end
       end
     end
     
@@ -66,12 +76,7 @@ module AllegroGraph
     
     def initialize_request_body
       return unless [ :post, :put ].include?(@http_method.to_sym)
-      if @body
-        @request.body = @body
-      else
-        quote_parameters
-        @request.set_form_data @quoted_parameters 
-      end
+      @request.body = @body ? @body : @serialized_parameters.sub(/^\?/, "")
     end
 
     def perform_request
@@ -154,8 +159,7 @@ module AllegroGraph
     end
 
     def parse_response
-      return nil if @response.body.nil?
-      @response = JSON.parse @response.body
+      @response = @response.body.nil? ? nil : JSON.parse(@response.body)
     rescue JSON::ParserError
       @response = @response.body.to_s
     end

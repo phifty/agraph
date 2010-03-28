@@ -37,6 +37,21 @@ describe AllegroGraph::Transport do
       do_request.body.should == "test"
     end
 
+    context "with parameters" do
+
+      before :each do
+        @options.merge! :parameters => { :foo => "bar", :test => [ "value1", "value2" ] }
+      end
+
+      it "should initialize the correct request object" do
+        Net::HTTP::Get.should_receive(:new).with(
+          "/?foo=bar&test=value1&test=value2", { }
+        ).and_return(@request)
+        do_request
+      end
+
+    end
+
   end
 
 end

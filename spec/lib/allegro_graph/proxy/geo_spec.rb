@@ -22,12 +22,30 @@ describe AllegroGraph::Proxy::Geo do
 
     it "should provide a cartesian type" do
       result = @geo.cartesian_type 1.0, 2.0, 20.0, 2.0, 20.0
-      result.should == "\"<http://franz.com/ns/allegrograph/3.0/geospatial/cartesian/2.0/20.0/2.0/20.0/1.0>\""
+      result.should == "<http://franz.com/ns/allegrograph/3.0/geospatial/cartesian/2.0/20.0/2.0/20.0/1.0>"
     end
+
+  end
+
+  describe "spherical_type" do
 
     it "should provide a spherical type" do
       result = @geo.spherical_type 1.0, :degree, 2.0, 20.0, 2.0, 20.0
-      result.should == "\"<http://franz.com/ns/allegrograph/3.0/geospatial/spherical/degrees/2.0/20.0/2.0/20.0/1.0>\""
+      result.should == "<http://franz.com/ns/allegrograph/3.0/geospatial/spherical/degrees/2.0/20.0/2.0/20.0/1.0>"
+    end
+
+  end
+
+  describe "create_polygon" do
+
+    before :each do
+      @type = @geo.cartesian_type 1.0, 2.0, 20.0, 2.0, 20.0
+      @points = [ [ 2.0, 2.0 ], [ 10.0, 2.0 ], [ 10.0, 10.0 ], [ 2.0, 10.0 ] ]
+    end
+
+    it "should create a polygon" do
+      result = @geo.create_polygon "test_polygon", @type, @points
+      result.should be_true
     end
 
   end

@@ -50,7 +50,7 @@ describe AllegroGraph::Proxy::Query do
 
     it "should return the query result" do
       @query.language = :prolog
-      result = @query.perform "(select (?subject) (q- ?subject ?predicate ?object))​"
+      result = @query.perform "(select (?subject) (q- ?subject !<http://xmlns.com/foaf/0.1/knows> ?object))"
       result.should == {
         "names"   => [ "subject" ],
         "values"  => [ [ "\"another_subject\"" ], [ "\"test_subject\"" ] ]

@@ -244,4 +244,37 @@ describe "integration" do
 
   end
 
+  describe "transactions" do
+
+    before :each do
+      @repository.statements.delete
+    end
+
+    it "should commit all changes at once" do
+      @repository.transaction do
+        statements.create "\"test_subject\"", "<http://xmlns.com/foaf/0.1/knows>", "\"test_object\""
+        statements.create "\"another_subject\"", "<http://xmlns.com/foaf/0.1/knows>", "\"another_object\""
+      end
+
+      result = @repository.statements.find
+      result.should include([ "\"test_subject\"", "<http://xmlns.com/foaf/0.1/knows>", "\"test_object\"" ])
+      result.should include([ "\"another_subject\"", "<http://xmlns.com/foaf/0.1/knows>", "\"another_object\"" ])
+    end
+
+    it "should rollback on error" do
+      lambda do
+        @repository.transaction do
+          statements.create "\"test_subject\"", "<http://xmlns.com/foaf/0.1/knows>", "\"test_object\""
+          statements.create "\"another_subject\"", "<http://xmlns.com/foaf/0.1/knows>", "\"another_object\""
+          invalid
+        end
+      end.should raise_error(NameError)
+
+      result = @repository.statements.find
+      result.should_not include([ "\"test_subject\"", "<http://xmlns.com/foaf/0.1/knows>", "\"test_object\"" ])
+      result.should_not include([ "\"another_subject\"", "<http://xmlns.com/foaf/0.1/knows>", "\"another_object\"" ])
+    end
+
+  end
+
 end

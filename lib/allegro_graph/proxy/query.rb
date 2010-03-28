@@ -8,17 +8,16 @@ module AllegroGraph
       LANGUAGES = [ :sparql, :prolog ].freeze unless defined?(LANGUAGES)
 
       attr_reader :server
-      attr_reader :repository
+      attr_reader :repository_or_session
       attr_reader :language
 
-      def initialize(repository)
-        @repository = repository
-        @server = @repository.server
+      def initialize(repository_or_session)
+        @repository_or_session = repository_or_session
         @language = :sparql
       end
 
       def path
-        @repository.path
+        @repository_or_session.path
       end
 
       def language=(value)
@@ -28,7 +27,7 @@ module AllegroGraph
 
       def perform(query)
         parameters = { :query => query, :queryLn => @language.to_s }
-        @server.request :get, self.path, :parameters => parameters, :expected_status_code => 200
+        @repository_or_session.request :get, self.path, :parameters => parameters, :expected_status_code => 200
       end
 
     end

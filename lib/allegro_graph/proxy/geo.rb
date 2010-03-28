@@ -5,16 +5,14 @@ module AllegroGraph
 
     class Geo
 
-      attr_reader :server
-      attr_reader :repository
+      attr_reader :repository_or_session
 
-      def initialize(repository)
-        @repository = repository
-        @server = @repository.server
+      def initialize(repository_or_session)
+        @repository_or_session = repository_or_session
       end
 
       def path
-        "#{@repository.path}/geo"
+        "#{@repository_or_session.path}/geo"
       end
 
       def cartesian_type(strip_width, x_min, y_min, x_max, y_max)
@@ -25,7 +23,7 @@ module AllegroGraph
           :xmax       => x_max.to_s,
           :ymax       => y_max.to_s
         }
-        type = @server.request :post, self.path + "/types/cartesian", :parameters => parameters, :expected_status_code => 200
+        type = @repository_or_session.request :post, self.path + "/types/cartesian", :parameters => parameters, :expected_status_code => 200
         type.sub! /^.*</, "<"
         type.sub! />.*$/, ">"
         type
@@ -40,7 +38,7 @@ module AllegroGraph
           :latmax     => latitude_max.to_s,
           :longmax    => longitude_max.to_s
         }
-        type = @server.request :post, self.path + "/types/spherical", :parameters => parameters, :expected_status_code => 200
+        type = @repository_or_session.request :post, self.path + "/types/spherical", :parameters => parameters, :expected_status_code => 200
         type.sub! /^.*</, "<"
         type.sub! />.*$/, ">"
         type
@@ -52,7 +50,7 @@ module AllegroGraph
           :resource => "\"#{name}\"",
           :point    => points.map{ |point| "\"%+g%+g\"^^%s" % [ point[0], point[1], type ] }
         }
-        @server.request :put, self.path + "/polygon", :parameters => parameters, :expected_status_code => 204
+        @repository_or_session.request :put, self.path + "/polygon", :parameters => parameters, :expected_status_code => 204
         true
       end
 
@@ -65,7 +63,7 @@ module AllegroGraph
           :xmax       => x_max.to_s,
           :ymax       => y_max.to_s
         }
-        @server.request :get, self.path + "/box", :parameters => parameters, :expected_status_code => 200
+        @repository_or_session.request :get, self.path + "/box", :parameters => parameters, :expected_status_code => 200
       end
 
       def inside_circle(type, predicate, x, y, radius)
@@ -76,7 +74,7 @@ module AllegroGraph
           :y          => y.to_s,
           :radius     => radius.to_s
         }
-        @server.request :get, self.path + "/circle", :parameters => parameters, :expected_status_code => 200
+        @repository_or_session.request :get, self.path + "/circle", :parameters => parameters, :expected_status_code => 200
       end
 
       def inside_haversine(type, predicate, latitude, longitude, radius, unit = :km)
@@ -88,7 +86,7 @@ module AllegroGraph
           :radius     => radius.to_s,
           :unit       => unit.to_s
         }
-        @server.request :get, self.path + "/haversine", :parameters => parameters, :expected_status_code => 200
+        @repository_or_session.request :get, self.path + "/haversine", :parameters => parameters, :expected_status_code => 200
       end
 
       def inside_polygon(type, predicate, name)
@@ -97,7 +95,7 @@ module AllegroGraph
           :predicate  => predicate,
           :polygon    => "\"#{name}\""
         }
-        @server.request :get, self.path + "/polygon", :parameters => parameters, :expected_status_code => 200
+        @repository_or_session.request :get, self.path + "/polygon", :parameters => parameters, :expected_status_code => 200
       end
 
       private

@@ -31,6 +31,19 @@ describe AllegroGraph::Repository do
 
   end
 
+  describe "request" do
+
+    before :each do
+      @server.stub!(:request)
+    end
+
+    it "should call the server's request method" do
+      @server.should_receive(:request).with(:get, "/", { })
+      @repository.request :get, "/"
+    end
+
+  end
+
   describe "exists?" do
 
     context "for a repository that already exists" do
@@ -169,6 +182,43 @@ describe AllegroGraph::Repository do
       @repository.size.should == 3
     end
     
+  end
+
+  describe "transaction" do
+
+    before :each do
+      @session = AllegroGraph::Session.new :url => "http://session:5555", :username => "test", :password => "test"
+      AllegroGraph::Session.stub!(:create).and_return(@session)
+
+      @session.statements.stub!(:create)
+    end
+
+    it "should use the session proxies" do
+      @session.statements.should_receive(:create)
+      @repository.transaction do
+        statements.create
+      end
+    end
+
+    it "should commit the session after block execution" do
+      @session.statements.should_receive(:create).ordered
+      @session.should_receive(:commit).ordered
+      @repository.transaction do
+        statements.create
+      end
+    end
+
+    it "should rollback the session on error" do
+      @session.statements.should_receive(:create).ordered
+      @session.should_receive(:rollback).ordered
+      lambda do
+        @repository.transaction do
+          statements.create
+          invalid
+        end
+      end.should raise_error(NameError)
+    end
+
   end
 
 end

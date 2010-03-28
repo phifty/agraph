@@ -5,22 +5,20 @@ module AllegroGraph
 
     class Statements
 
-      attr_reader :server
-      attr_reader :repository
+      attr_reader :repository_or_session
 
-      def initialize(repository)
-        @repository = repository
-        @server = @repository.server
+      def initialize(repository_or_session)
+        @repository_or_session = repository_or_session
       end
 
       def path
-        "#{@repository.path}/statements"
+        "#{@repository_or_session.path}/statements"
       end
 
       def create(subject, predicate, object, context = nil)
         statement = [ subject, predicate, object ]
         statement << context if context
-        @server.request :post, self.path, :body => [ statement ], :expected_status_code => 204
+        @repository_or_session.request :post, self.path, :body => [ statement ], :expected_status_code => 204
         true
       end
 
@@ -40,11 +38,11 @@ module AllegroGraph
 
         parameters = nil if parameters.empty?
 
-        @server.request :get, self.path, :parameters => parameters, :expected_status_code => 200
+        @repository_or_session.request :get, self.path, :parameters => parameters, :expected_status_code => 200
       end
 
       def delete
-        @server.request :delete, self.path, :expected_status_code => 200
+        @repository_or_session.request :delete, self.path, :expected_status_code => 200
       end
 
     end

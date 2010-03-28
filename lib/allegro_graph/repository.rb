@@ -1,4 +1,5 @@
 require File.join(File.dirname(__FILE__), "server")
+require File.join(File.dirname(__FILE__), "session")
 require File.join(File.dirname(__FILE__), "proxy", "statements")
 require File.join(File.dirname(__FILE__), "proxy", "query")
 require File.join(File.dirname(__FILE__), "proxy", "geo")
@@ -10,6 +11,7 @@ module AllegroGraph
     attr_reader   :server
     attr_reader   :catalog
     attr_accessor :name
+
     attr_reader   :statements
     attr_reader   :query
     attr_reader   :geo
@@ -29,6 +31,10 @@ module AllegroGraph
 
     def path
       "#{@catalog.path}/repositories/#{@name}"
+    end
+
+    def request(http_method, path, options = { })
+      @server.request http_method, path, options
     end
 
     def exists?
@@ -62,6 +68,17 @@ module AllegroGraph
     def size
       response = @server.request :get, self.path + "/size", :type => :text, :expected_status_code => 200
       response.to_i
+    end
+
+    def transaction(&block)
+      session = Session.create self
+      begin
+        session.instance_eval &block
+      rescue Object => error
+        session.rollback
+        raise error
+      end
+      session.commit
     end
 
   end

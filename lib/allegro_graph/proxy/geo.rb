@@ -91,6 +91,15 @@ module AllegroGraph
         @server.request :get, self.path + "/haversine", :parameters => parameters, :expected_status_code => 200
       end
 
+      def inside_polygon(type, predicate, name)
+        parameters = {
+          :type       => type,
+          :predicate  => predicate,
+          :polygon    => "\"#{name}\""
+        }
+        @server.request :get, self.path + "/polygon", :parameters => parameters, :expected_status_code => 200
+      end
+
       private
 
       def float_to_iso_6709(value, digits)

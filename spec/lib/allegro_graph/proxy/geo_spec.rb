@@ -77,4 +77,13 @@ describe AllegroGraph::Proxy::Geo do
 
   end
 
+  describe "inside_polygon" do
+
+    it "should find objects inside a polygon" do
+      result = @geo.inside_polygon @type, "\"at\"", "test_polygon"
+      result.should include([ "\"test_subject\"", "\"at\"", "\"+10.000000000931323+10.000000000931323\"^^<http://franz.com/ns/allegrograph/3.0/geospatial/cartesian/2.0/20.0/2.0/20.0/1.0>"])
+    end
+
+  end
+
 end

@@ -1,0 +1,136 @@
+
+= Ruby client for the AllegroGraph RDF graph database
+
+The agraph gem provides a client for the RESTful interface of AllegroGraph RDF graph database version 4.x. This
+document should give you overview, how the client can be used. To get familiar with the database server, this
+documentation[http://franz.com/agraph/support/documentation/current/agraph-introduction.html] is strongly recommended.
+
+The features that are exposed by this client are...
+* simple repository management
+* add / remove statements (aka triples) to / from the store
+* searching for statements by subject, predicate or object (or any combination of them)
+* searching for statements by geo-spatial queries
+* transactions
+* performing SparQL and Prolog queries
+* mapping of data type
+
+== Repository management
+
+A repository can be created by simply typing the following.
+
+  require 'allegro_graph'
+
+  server = AllegroGraph::Server.new :username => "user", :password => "pass"
+  repository = AllegroGraph::Repository.new server, "test_repository"
+  repository.create_if_missing!
+
+The code will try to connect to a AllegroGraph server running at <tt>localhost:10035</tt> with the credentials
+<tt>user</tt> and <tt>pass</tt>, and creates a repository named <tt>test_repository</tt> if it's not already existing.
+
+== Adding and Removing triples
+
+Once a repository is created, statements can be added.
+
+  repository.statements.create "<a_subject>", "<a_predicate>", "<an_object>", "<context>"
+
+The last argument is optinal and defines a context for the given triple. This context can be used to define named graphs
+inside the repository.
+
+To delete statements, matching options can be passed to the delete method.
+
+  repository.statements.delete :predicate => "<a_predicate>"
+
+This will delete all statements with the predicate <tt><a_predicate></tt>.
+
+== Searching for statements
+
+The <tt>find</tt> method provides an easy way to find specified statements.
+
+  repository.statements.find :subject => "<a_subject>", :predicate => [ "<a_predicate>", "<another_predicate>" ]
+
+The result will be an array that holds arrays of all matching statements.
+
+  [
+    [ "<a_subject>", "<a_predicate>", "<a_object>" ],
+    [ "<a_subject>", "<another_predicate>", "<another_object>" ]
+  ]
+
+== Searching for statements by geo-spatial queries
+
+=== Adding coordinates to the database
+
+Before coordinates can be added, a fitting type has to be requested from the database. Coordinates can have the
+cartesian (x and y) or spherical (latitude and longitude) type. When creating the type, also a range has to be defined.
+
+  cartesian_type = repository.geo.cartesian_type 1, 0, 0, 100, 100
+
+The first argument specifies the strip width and the last four the top-left and bottom-right corner of the rectangle
+that represent the boundaries for any coordinate.
+
+Afterwards, the return type can be used add geometric nodes (subjects or objects) to the database.
+
+  repository.statements.create "<a_subject>", "<a_predicate>", "\"+20+20\"^^#{cartesian_type}"
+
+=== Finding statements by geo-spatial queries
+
+To find statements by thier assigned coordinates, the following methods are provided.
+
+  repository.geo.inside_box
+  repository.geo.inside_circle
+  repository.geo.inside_haversine
+  repository.geo.inside_polygon
+
+The previously create statement will be returned by
+
+  repository.geo.inside_box cartesian_type, "<a_predicate>", 10, 10, 30, 30
+
+== Transactions
+
+agraph also allows you to perform transaction. All operations performed within a transaction will committed at once. If
+an error occurs during the transaction, all operations will be rolled back.
+
+  repository.transaction do
+    statements.create "<a_subject>", "<a_predicate>", "<an_object>"
+    statements.create "<a_subject>", "<a_predicate>", "<another_object>"
+    # ... if an error is raised here, no operation will be committed
+  end
+
+== SparQL and Prolog queries
+
+The perform a SparQL or Prolog query, simply set the language that the query is written in and pass the query string to
+the following method.
+
+  repository.query.language = :sparql
+  repository.query.perform "SELECT ?s WHERE { ?s ?p ?o . }"
+
+At the moment only <tt>:sparql</tt> and <tt>:prolog</tt> queries are supported.
+
+The result will look like this.
+
+  { "names" => [ "s" ], "values" => [ [ "<a_subject>" ], [ "<another_subject>" ] ] }
+
+== Mapping of data types
+
+To add and remove mapping between types and it's encodings, the following methods can be used.
+
+  repository.mapping.create "<time>", "<http://www.w3.org/2001/XMLSchema#dateTime>"
+  repository.mapping.delete "<time>"
+
+With such a type defined, it's possible to perform range queries like
+
+  repository.statements.create "<event_one>", "<occurs>", "\"2010-03-29T11:40:00\"^^<time>"
+  repository.statements.create "<event_two>", "<occurs>", "\"2010-03-29T17:40:00\"^^<time>"
+
+  repository.statements.find :predicate => "<occurs>", :object => [ "\"2010-03-29T11:00:00\"^^<time>", "\"2010-03-29T12:00:00\"^^<time>" ]
+
+Only the second event would be returned.
+
+== More Examples
+
+More examples can be found in the integration specs (spec/integration)
+
+== Contribution
+
+Any contribution - especially bug reports - is welcome.
+
+Fork or send mail to b.phifty@gmail.com

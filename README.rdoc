@@ -33,8 +33,8 @@ Once a repository is created, statements can be added.
 
   repository.statements.create "<a_subject>", "<a_predicate>", "<an_object>", "<context>"
 
-The last argument is optinal and defines a context for the given triple. This context can be used to define named graphs
-inside the repository.
+The last argument is optional and defines a context for the given triple. This context can be used to define named
+graphs inside the repository.
 
 To delete statements, matching options can be passed to the delete method.
 
@@ -46,7 +46,7 @@ This will delete all statements with the predicate <tt><a_predicate></tt>.
 
 The <tt>find</tt> method provides an easy way to find specified statements.
 
-  repository.statements.find :subject => "<a_subject>", :predicate => [ "<a_predicate>", "<another_predicate>" ]
+  repository.statements.find :subject => "<a_subject>"
 
 The result will be an array that holds arrays of all matching statements.
 
@@ -94,6 +94,7 @@ an error occurs during the transaction, all operations will be rolled back.
     statements.create "<a_subject>", "<a_predicate>", "<another_object>"
     # ... if an error is raised here, no operation will be committed
   end
+  # ... if no error has occured, all operations will be committed
 
 == SparQL and Prolog queries
 

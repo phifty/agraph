@@ -54,6 +54,33 @@
     :body:      ""
 -
   :http_method: "get"
+  :url:         "http://localhost:10035/federated"
+  :response:
+    :code:      "200"
+    :body:
+      -
+        "uri":      "http://localhost:10035/federated/test_federation"
+        "id":       "test_federation"
+        "title":    "test_federation"
+        "readable": true
+        "writable": false
+-
+  :http_method: "put"
+  :url:         "http://localhost:10035/federated/test_federation"
+  :parameters:
+    :repo:      [ "test_repository" ]
+    :url:       [ "http://username:password@server:10035/repositories/another" ]
+  :response:
+    :code:      "204"
+    :body:      ""
+-
+  :http_method: "delete"
+  :url:         "http://localhost:10035/federated/test_federation"
+  :response:
+    :code:      "204"
+    :body:      ""
+-
+  :http_method: "get"
   :url:         "http://localhost:10035/catalogs/test_catalog/repositories"
   :response:
     :code:      "200"

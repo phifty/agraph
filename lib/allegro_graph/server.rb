@@ -1,5 +1,6 @@
 require File.join(File.dirname(__FILE__), "transport")
 require File.join(File.dirname(__FILE__), "catalog")
+require File.join(File.dirname(__FILE__), "federation")
 
 module AllegroGraph
 
@@ -45,6 +46,11 @@ module AllegroGraph
         result << Catalog.new(self, id.sub(/^\//, "")) unless id == "/"
       end
       result
+    end
+
+    def federations
+      federations = self.request :get, "/federated", :expected_status_code => 200
+      federations.map { |federation| Federation.new self, federation["id"] }
     end
 
     def url

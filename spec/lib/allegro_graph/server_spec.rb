@@ -60,4 +60,16 @@ describe AllegroGraph::Server do
 
   end
 
+  describe "federations" do
+
+    before :each do
+      @federation = AllegroGraph::Federation.new @server, "test_federation"
+    end
+
+    it "should return the federations of the server" do
+      @server.federations.should include(@federation)
+    end
+
+  end
+
 end

@@ -277,4 +277,27 @@ describe "integration" do
 
   end
 
+  describe "federations" do
+
+    before :each do
+      @federation = AllegroGraph::Federation.new @server, "test_federation", :repository_names => [ @repository.name ]
+    end
+    
+    it "should create a federation" do
+      @federation.delete_if_exists!
+      @federation.create!.should be_true
+    end
+
+    it "should list the federations" do
+      @federation.create_if_missing!
+      @server.federations.should include(@federation)
+    end
+
+    it "should delete a federation" do
+      @federation.create_if_missing!
+      @federation.delete!.should be_true
+    end
+
+  end
+
 end

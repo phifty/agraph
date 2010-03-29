@@ -14,6 +14,12 @@ The features that are exposed by this client are...
 * performing SparQL and Prolog queries
 * mapping of data type
 
+== Installation
+
+There are no special dependencies. Just type
+
+  gem install agraph
+
 == Repository management
 
 A repository can be created by simply typing the following.

@@ -115,8 +115,11 @@ describe "integration" do
 
       it "should delete all statements" do
         lambda do
-          @statements.delete
-        end.should change(@repository, :size).to(0)
+          @statements.delete :subject   => "\"test_subject\"",
+                             :predicate => "\"test_predicate\"",
+                             :object    => "\"test_object\"",
+                             :context   => "\"test_context\""
+        end.should change(@repository, :size)
       end
 
     end

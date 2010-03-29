@@ -147,6 +147,8 @@
 -
   :http_method: "delete"
   :url:         "http://localhost:10035/catalogs/test_catalog/repositories/test_repository/statements"
+  :parameters:
+    :subj:      "test_subject"
   :response:
     :code:      "200"
     :body:      ""

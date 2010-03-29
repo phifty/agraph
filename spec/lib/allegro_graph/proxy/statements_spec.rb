@@ -49,7 +49,7 @@ describe AllegroGraph::Proxy::Statements do
   describe "delete" do
 
     it "should delete all statements" do
-      result = @statements.delete
+      result = @statements.delete :subject => "test_subject"
       result.should be_true
     end
 

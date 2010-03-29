@@ -41,8 +41,17 @@ module AllegroGraph
         @resource.request :get, self.path, :parameters => parameters, :expected_status_code => 200
       end
 
-      def delete
-        @resource.request :delete, self.path, :expected_status_code => 200
+      def delete(options = { })
+        parameters = { }
+
+        { :subject => :subj, :predicate => :pred, :object => :obj, :context => :context }.each do |option_key, parameter_key|
+          value = options[option_key]
+          parameters.merge! value.is_a?(Array) ?
+                              { :"#{parameter_key}" => value[0], :"#{parameter_key}End" => value[1] } :
+                              { parameter_key => value } if value
+        end
+
+        @resource.request :delete, self.path, :parameters => parameters, :expected_status_code => 200
       end
 
     end

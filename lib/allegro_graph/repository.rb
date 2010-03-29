@@ -3,6 +3,7 @@ require File.join(File.dirname(__FILE__), "session")
 require File.join(File.dirname(__FILE__), "proxy", "statements")
 require File.join(File.dirname(__FILE__), "proxy", "query")
 require File.join(File.dirname(__FILE__), "proxy", "geo")
+require File.join(File.dirname(__FILE__), "proxy", "mapping")
 
 module AllegroGraph
 
@@ -15,6 +16,7 @@ module AllegroGraph
     attr_reader   :statements
     attr_reader   :query
     attr_reader   :geo
+    attr_reader   :mapping
 
     def initialize(server_or_catalog, name, options = { })
       @catalog    = server_or_catalog.is_a?(AllegroGraph::Server) ? server_or_catalog.root_catalog : server_or_catalog
@@ -23,6 +25,7 @@ module AllegroGraph
       @statements = Proxy::Statements.new self
       @query      = Proxy::Query.new self
       @geo        = Proxy::Geo.new self
+      @mapping    = Proxy::Mapping.new self
     end
 
     def ==(other)

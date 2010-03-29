@@ -1,5 +1,5 @@
 require File.expand_path(File.join(File.dirname(__FILE__), "..", "..", "..", "spec_helper"))
-require File.expand_path(File.join(File.dirname(__FILE__), "..", "..", "..", "..", "lib", "allegro_graph", "proxy", "query"))
+require File.expand_path(File.join(File.dirname(__FILE__), "..", "..", "..", "..", "lib", "allegro_graph", "proxy", "geo"))
 
 describe AllegroGraph::Proxy::Geo do
 

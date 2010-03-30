@@ -166,22 +166,31 @@ describe "integration" do
 
   end
 
-  describe "geo" do
+  describe "geo-spatial data" do
 
     before :each do
       @repository.create_if_missing!
-      @geo = @repository.geo
+      @geometric  = @repository.geometric
+      @statements = @repository.statements
     end
 
     describe "types" do
 
       it "should provide a cartesian type" do
-        result = @geo.cartesian_type 1.0, 2.0, 2.0, 20.0, 20.0
+        result = @geometric.cartesian_type :strip_width => 1.0,
+                                           :x_min       => 2.0,
+                                           :y_min       => 2.0,
+                                           :x_max       => 20.0,
+                                           :y_max       => 20.0
         result.should == "<http://franz.com/ns/allegrograph/3.0/geospatial/cartesian/2.0/20.0/2.0/20.0/1.0>"
       end
 
       it "should provide a spherical type" do
-        result = @geo.spherical_type 1.0, :degree, 2.0, 2.0, 20.0, 20.0
+        result = @geometric.spherical_type :strip_width   => 1.0,
+                                           :latitude_min  => 2.0,
+                                           :longitude_min => 2.0,
+                                           :latitude_max  => 20.0,
+                                           :longitude_max => 20.0
         result.should == "<http://franz.com/ns/allegrograph/3.0/geospatial/spherical/degrees/2.0/20.0/2.0/20.0/1.0>"
       end
       
@@ -190,12 +199,16 @@ describe "integration" do
     describe "creating polygon" do
 
       before :each do
-        @type = @geo.cartesian_type 1.0, 2.0, 2.0, 20.0, 20.0
+        @type = @geometric.cartesian_type :strip_width => 1.0,
+                                          :x_min       => 2.0,
+                                          :y_min       => 2.0,
+                                          :x_max       => 20.0,
+                                          :y_max       => 20.0
         @polygon = [ [ 2.0, 2.0 ], [ 11.0, 2.0 ], [ 11.0, 11.0 ], [ 2.0, 11.0 ] ]
       end
 
       it "should return true" do
-        result = @geo.create_polygon "test_polygon", @type, @polygon
+        result = @geometric.create_polygon @polygon, :name => "test_polygon", :type => @type
         result.should be_true
       end
       
@@ -204,19 +217,32 @@ describe "integration" do
     context "in a cartesian system" do
 
       before :each do
-        @type = @geo.cartesian_type 1.0, 2.0, 2.0, 20.0, 20.0
-        @repository.statements.create "\"test_subject\"", "\"at\"", "\"+10+10\"^^#{@type}"
-        @repository.statements.create "\"another_subject\"", "\"at\"", "\"+15+15\"^^#{@type}"
+        @type = @geometric.cartesian_type :strip_width => 1.0,
+                                          :x_min       => 2.0,
+                                          :y_min       => 2.0,
+                                          :x_max       => 20.0,
+                                          :y_max       => 20.0
+        @statements.create "\"test_subject\"", "\"at\"", "\"+10+10\"^^#{@type}"
+        @statements.create "\"another_subject\"", "\"at\"", "\"+15+15\"^^#{@type}"
       end
 
       it "should find objects inside a box" do
-        result = @geo.inside_box @type, "\"at\"", 8.0, 8.0, 11.0, 11.0
+        result = @statements.find_inside_box :type       => @type,
+                                             :predicate  => "\"at\"",
+                                             :x_min      => 8.0,
+                                             :y_min      => 8.0,
+                                             :x_max      => 11.0,
+                                             :y_max      => 11.0
         result.should include([ "\"test_subject\"", "\"at\"", "\"+10.000000000931323+10.000000000931323\"^^#{@type}"])
         result.should_not include([ "\"another_subject\"", "\"at\"", "\"+15.000000000465661+15.000000000465661\"^^#{@type}"])
       end
 
       it "should find objects inside a circle" do
-        result = @geo.inside_circle @type, "\"at\"", 9.0, 9.0, 2.0
+        result = @statements.find_inside_circle :type      => @type,
+                                                :predicate => "\"at\"",
+                                                :x         => 9.0,
+                                                :y         => 9.0,
+                                                :radius    => 2.0
         result.should include([ "\"test_subject\"", "\"at\"", "\"+10.000000000931323+10.000000000931323\"^^#{@type}"])
         result.should_not include([ "\"another_subject\"", "\"at\"", "\"+15.000000000465661+15.000000000465661\"^^#{@type}"])
       end
@@ -224,14 +250,22 @@ describe "integration" do
       context "with a defined polygon" do
 
         before :each do
-          @type = @geo.cartesian_type 1, -100, -100, 100, 100
-          @repository.statements.create "\"test_subject\"", "\"at\"", "\"+1+1\"^^#{@type}"
-          @geo.create_polygon "test_polygon", @type, [ [ 0, -100 ], [ 0, 100 ], [ 100, 100 ], [ 100, -100 ] ]
+          @type = @geometric.cartesian_type :strip_width => 1,
+                                            :x_min       => -100,
+                                            :y_min       => -100,
+                                            :x_max       => 100,
+                                            :y_max       => 100
+          @statements.create "\"test_subject\"", "\"at\"", "\"+1+1\"^^#{@type}"
+          @geometric.create_polygon [ [ 0, -100 ], [ 0, 100 ], [ 100, 100 ], [ 100, -100 ] ],
+                                    :name => "test_polygon",
+                                    :type => @type
         end
 
         it "should find objects inside that polygon" do
           pending
-          result = @geo.inside_polygon @type, "\"at\"", "test_polygon"
+          result = @statements.find_inside_polygon :type         => @type,
+                                                   :predicate    => "\"at\"",
+                                                   :polygon_name => "test_polygon"
           result.should include([ "\"test_subject\"", "\"at\"", "\"+1+1\"^^<http://franz.com/ns/allegrograph/3.0/geospatial/cartesian/2.0/20.0/2.0/20.0/1.0>"])
         end
 
@@ -242,12 +276,21 @@ describe "integration" do
     context "in a spherical system" do
 
       before :each do
-        @type = @geo.spherical_type 1.0, :degree, 2.0, 2.0, 20.0, 20.0
-        @repository.statements.create "\"test_subject\"", "\"at\"", "\"+10.00+010.00\"^^#{@type}"
+        @type = @geometric.spherical_type :strip_width   => 1.0,
+                                          :latitude_min  => 2.0,
+                                          :longitude_min => 2.0,
+                                          :latitude_max  => 20.0,
+                                          :longitude_max => 20.0
+        @statements.create "\"test_subject\"", "\"at\"", "\"+10.00+010.00\"^^#{@type}"
       end
 
       it "should find objects inside a haversine" do
-        result = @geo.inside_haversine @type, "\"at\"", 9.0, 9.0, 200.0, :km
+        result = @statements.find_inside_haversine :type       => @type,
+                                                   :predicate  => "\"at\"",
+                                                   :latitude   => 9.0,
+                                                   :longitude  => 9.0,
+                                                   :radius     => 200.0,
+                                                   :unit       => :km
         result.should include([ "\"test_subject\"", "\"at\"", "\"+100000+0100000\"^^<http://franz.com/ns/allegrograph/3.0/geospatial/spherical/degrees/2.0/20.0/2.0/20.0/1.0>"])
       end
 

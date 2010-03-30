@@ -1,7 +1,7 @@
 require File.join(File.dirname(__FILE__), "transport")
 require File.join(File.dirname(__FILE__), "proxy", "statements")
 require File.join(File.dirname(__FILE__), "proxy", "query")
-require File.join(File.dirname(__FILE__), "proxy", "geo")
+require File.join(File.dirname(__FILE__), "proxy", "geometric")
 require File.join(File.dirname(__FILE__), "proxy", "mapping")
 
 module AllegroGraph
@@ -14,7 +14,7 @@ module AllegroGraph
 
     attr_reader :statements
     attr_reader :query
-    attr_reader :geo
+    attr_reader :geometric
     attr_reader :mapping
 
     def initialize(options = { })
@@ -24,7 +24,7 @@ module AllegroGraph
 
       @statements = Proxy::Statements.new self
       @query      = Proxy::Query.new self
-      @geo        = Proxy::Geo.new self
+      @geometric  = Proxy::Geometric.new self
       @mapping    = Proxy::Mapping.new self
     end
 

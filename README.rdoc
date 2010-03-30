@@ -68,7 +68,7 @@ The result will be an array that holds arrays of all matching statements.
 Before coordinates can be added, a fitting type has to be requested from the database. Coordinates can have the
 cartesian (x and y) or spherical (latitude and longitude) type. When creating the type, also a range has to be defined.
 
-  cartesian_type = repository.geo.cartesian_type 1, 0, 0, 100, 100
+  cartesian_type = repository.geometric.cartesian_type 1, 0, 0, 100, 100
 
 The first argument specifies the strip width and the last four the top-left and bottom-right corner of the rectangle
 that represent the boundaries for any coordinate.
@@ -81,14 +81,19 @@ Afterwards, the return type can be used add geometric nodes (subjects or objects
 
 To find statements by thier assigned coordinates, the following methods are provided.
 
-  repository.geo.inside_box
-  repository.geo.inside_circle
-  repository.geo.inside_haversine
-  repository.geo.inside_polygon
+  repository.statements.find_inside_box
+  repository.statements.find_inside_circle
+  repository.statements.find_inside_haversine
+  repository.statements.find_inside_polygon
 
 The previously create statement will be returned by
 
-  repository.geo.inside_box cartesian_type, "<a_predicate>", 10, 10, 30, 30
+  repository.geometric.find_inside_box :type      => cartesian_type,
+                                       :predicate => "<a_predicate>",
+                                       :x_min     => 10,
+                                       :y_min     => 10,
+                                       :x_max     => 30,
+                                       :y_max     => 30
 
 == Transactions
 

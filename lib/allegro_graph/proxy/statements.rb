@@ -4,6 +4,8 @@ module AllegroGraph
 
   module Proxy
 
+    # The Statement class acts as proxy to functions that add, remove or find statements
+    # in the AllegroGraph data store.
     class Statements
 
       attr_reader :resource

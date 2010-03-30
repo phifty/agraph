@@ -2,6 +2,8 @@ require File.join(File.dirname(__FILE__), "repository")
 
 module AllegroGraph
 
+  # The Catalog class wrap the corresponding resource on the AllegroGraph server. A catalog can hold
+  # many repositories.
   class Catalog
 
     attr_reader   :server

@@ -4,6 +4,7 @@ module AllegroGraph
 
   module Proxy
 
+    # The Geometric class acts as proxy to the geo-functions of the AllegroGraph server.
     class Geometric
 
       attr_reader :resource

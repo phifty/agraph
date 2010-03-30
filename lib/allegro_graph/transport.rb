@@ -62,11 +62,8 @@ module AllegroGraph
     def quote_parameters
       @quoted_parameters = { }
       @parameters.each do |key, value|
-        if value.is_a?(Array)
-          @quoted_parameters[ CGI.escape("#{key}") ] = value.map{ |element| CGI.escape element }
-        else
-          @quoted_parameters[ CGI.escape("#{key}") ] = CGI.escape value
-        end
+        quoted_key = CGI.escape(key.to_s)
+        @quoted_parameters[quoted_key] = value.is_a?(Array) ? value.map{ |element| CGI.escape element } : CGI.escape(value)
       end
     end
     
@@ -93,6 +90,7 @@ module AllegroGraph
 
   end
 
+  # Extended transport layer for http transfers. Basic authorization and JSON transfers are supported.
   class ExtendedTransport < Transport
 
     # The UnexpectedStatusCodeError is raised if the :expected_status_code option is given to
@@ -159,9 +157,10 @@ module AllegroGraph
     end
 
     def parse_response
-      @response = @response.body.nil? ? nil : JSON.parse(@response.body)
+      body = @response.body
+      @response = body.nil? ? nil : JSON.parse(body)
     rescue JSON::ParserError
-      @response = @response.body.to_s
+      @response = body.to_s
     end
 
   end

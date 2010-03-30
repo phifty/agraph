@@ -6,6 +6,8 @@ require File.join(File.dirname(__FILE__), "proxy", "mapping")
 
 module AllegroGraph
 
+  # The Federation class wrap the corresponding resource on the AllegroGraph server. A federation is a collection
+  # of many repositories that acts like a single one. Only read access is allowed.
   class Federation
 
     attr_reader   :server

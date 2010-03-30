@@ -7,6 +7,8 @@ require File.join(File.dirname(__FILE__), "proxy", "mapping")
 
 module AllegroGraph
 
+  # The Repository class wrap the corresponding resource on the AllegroGraph server. A repository acts as a scope for
+  # statements. Simple management methods are provided.
   class Repository
 
     attr_reader   :server
@@ -74,14 +76,18 @@ module AllegroGraph
     end
 
     def transaction(&block)
-      session = Session.create self
+      self.class.transaction self, &block
+    end
+
+    def self.transaction(repository, &block)
+      session = Session.create repository
       begin
         session.instance_eval &block
       rescue Object => error
         session.rollback
         raise error
       end
-      session.commit
+      session.commit      
     end
 
   end

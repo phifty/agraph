@@ -3,6 +3,7 @@ module AllegroGraph
 
   module Proxy
 
+    # The Mapping class acts as proxy to the data type mapping functions of the AllegroGraph server.
     class Mapping
 
       attr_reader :resource

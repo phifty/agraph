@@ -6,6 +6,7 @@ require File.join(File.dirname(__FILE__), "proxy", "mapping")
 
 module AllegroGraph
 
+  # The Session class wrap the corresponding resource on the AllegroGraph server.
   class Session
 
     attr_reader :url
@@ -50,7 +51,8 @@ module AllegroGraph
       url = repository.request :post, repository.path + "/session", :expected_status_code => 200
       url.sub! /^"/, ""
       url.sub! /"$/, ""
-      new :url => url, :username => repository.server.username, :password => repository.server.password
+      server = repository.server
+      new :url => url, :username => server.username, :password => server.password
     end
 
     private

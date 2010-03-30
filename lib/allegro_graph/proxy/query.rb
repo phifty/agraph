@@ -3,6 +3,7 @@ module AllegroGraph
 
   module Proxy
 
+    # The Query class acts as proxy that bypasses SparQL and Prolog queries to the AllegroGraph server.
     class Query
 
       LANGUAGES = [ :sparql, :prolog ].freeze unless defined?(LANGUAGES)
@@ -21,8 +22,9 @@ module AllegroGraph
       end
 
       def language=(value)
-        raise NotImplementedError, "query langauge [#{value}] is not implemented" unless LANGUAGES.include?(value.to_sym)
-        @language = value.to_sym
+        value = value.to_sym
+        raise NotImplementedError, "query langauge [#{value}] is not implemented" unless LANGUAGES.include?(value)
+        @language = value
       end
 
       def perform(query)

@@ -36,7 +36,7 @@ module AllegroGraph
     private
 
     def initialize_request_class
-      request_class_name = @http_method.capitalize
+      request_class_name = @http_method.to_s.capitalize
       raise NotImplementedError, "the request method #{http_method} is not implemented" unless Net::HTTP.const_defined?(request_class_name)
       @request_class = Net::HTTP.const_get request_class_name
     end

@@ -1,7 +1,6 @@
 require 'uri'
 require 'cgi'
 require 'net/http'
-require 'base64'
 require 'json'
 
 module AllegroGraph
@@ -133,12 +132,16 @@ module AllegroGraph
     private
 
     def initialize_headers
+      @headers["Accept"] = "application/json"
+    end
+
+    def initialize_request
+      super
       if @auth_type == :basic
-        @headers["Authorization"] = "Basic " + Base64.encode64("#{@username}:#{@password}")
+        @request.basic_auth @username, @password
       elsif !@auth_type.nil?
         raise NotImplementedError, "the given auth_type [#{@auth_type}] is not implemented"
       end
-      @headers["Accept"] = "application/json"
     end
 
     def initialize_request_body

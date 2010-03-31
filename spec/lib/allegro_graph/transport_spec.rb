@@ -84,9 +84,7 @@ describe AllegroGraph::ExtendedTransport do
     end
 
     it "should initialize the correct request object" do
-      Net::HTTP::Get.should_receive(:new).with(
-        "/", { "Authorization" => "Basic dGVzdDp0ZXN0\n", "Accept" => "application/json" }
-      ).and_return(@request)
+      Net::HTTP::Get.should_receive(:new).with("/", { "Accept" => "application/json" }).and_return(@request)
       do_request
     end
 

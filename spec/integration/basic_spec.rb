@@ -262,11 +262,10 @@ describe "integration" do
         end
 
         it "should find objects inside that polygon" do
-          pending
           result = @statements.find_inside_polygon :type         => @type,
                                                    :predicate    => "\"at\"",
                                                    :polygon_name => "test_polygon"
-          result.should include([ "\"test_subject\"", "\"at\"", "\"+1+1\"^^<http://franz.com/ns/allegrograph/3.0/geospatial/cartesian/2.0/20.0/2.0/20.0/1.0>"])
+          result.should include([ "\"test_subject\"", "\"at\"", "\"+0.9999999776482582+0.9999999776482582\"^^<http://franz.com/ns/allegrograph/3.0/geospatial/cartesian/-100.0/100.0/-100.0/100.0/1.0>"])
         end
 
       end

@@ -41,8 +41,11 @@ module AllegroGraph
     end
 
     def initialize_request_path
-      serialize_parameters
-      @request_path = @uri.path + @serialized_parameters
+      @request_path = @uri.path # + (@uri.query ? "?" + @uri.query : "")
+      unless parameter_body?
+        serialize_parameters
+        @request_path += @serialized_parameters
+      end
     end
 
     def serialize_parameters
@@ -71,14 +74,20 @@ module AllegroGraph
     end
     
     def initialize_request_body
-      return unless [ :post, :put ].include?(@http_method.to_sym)
-      @request.body = @body ? @body : @serialized_parameters.sub(/^\?/, "")
+      if parameter_body?
+        serialize_parameters
+        @request.body = @body ? @body : @serialized_parameters.sub(/^\?/, "")
+      end
     end
 
     def perform_request
       @response = Net::HTTP.start(@uri.host, @uri.port) do |connection|
         connection.request @request
       end
+    end
+
+    def parameter_body?
+      [ :post, :put ].include? @http_method.to_sym
     end
 
     def self.request(http_method, url, options = { })

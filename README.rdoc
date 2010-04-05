@@ -68,7 +68,11 @@ The result will be an array that holds arrays of all matching statements.
 Before coordinates can be added, a fitting type has to be requested from the database. Coordinates can have the
 cartesian (x and y) or spherical (latitude and longitude) type. When creating the type, also a range has to be defined.
 
-  cartesian_type = repository.geometric.cartesian_type 1, 0, 0, 100, 100
+  cartesian_type = repository.geometric.cartesian_type :strip_width => 1,
+                                                       :x_min       => 0,
+                                                       :y_min       => 0,
+                                                       :x_max       => 100,
+                                                       :y_max       => 100
 
 The first argument specifies the strip width and the last four the top-left and bottom-right corner of the rectangle
 that represent the boundaries for any coordinate.

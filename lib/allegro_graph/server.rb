@@ -1,6 +1,3 @@
-require File.join(File.dirname(__FILE__), "transport")
-require File.join(File.dirname(__FILE__), "catalog")
-require File.join(File.dirname(__FILE__), "federation")
 
 module AllegroGraph
 

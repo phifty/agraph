@@ -1,4 +1,3 @@
-require File.join(File.dirname(__FILE__), "transport")
 require File.join(File.dirname(__FILE__), "proxy", "statements")
 require File.join(File.dirname(__FILE__), "proxy", "query")
 require File.join(File.dirname(__FILE__), "proxy", "geometric")

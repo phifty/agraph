@@ -1,4 +1,3 @@
-require File.join(File.dirname(__FILE__), "repository")
 
 module AllegroGraph
 

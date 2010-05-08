@@ -1,5 +1,3 @@
-require File.join(File.dirname(__FILE__), "server")
-require File.join(File.dirname(__FILE__), "session")
 require File.join(File.dirname(__FILE__), "proxy", "statements")
 require File.join(File.dirname(__FILE__), "proxy", "query")
 require File.join(File.dirname(__FILE__), "proxy", "geometric")

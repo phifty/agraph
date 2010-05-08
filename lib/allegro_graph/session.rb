@@ -1,31 +1,18 @@
-require File.join(File.dirname(__FILE__), "proxy", "statements")
-require File.join(File.dirname(__FILE__), "proxy", "query")
-require File.join(File.dirname(__FILE__), "proxy", "geometric")
-require File.join(File.dirname(__FILE__), "proxy", "mapping")
 
 module AllegroGraph
 
   # The Session class wrap the corresponding resource on the AllegroGraph server.
-  class Session
+  class Session < Resource
 
     attr_reader :url
     attr_reader :username
     attr_reader :password
 
-    attr_reader :statements
-    attr_reader :query
-    attr_reader :geometric
-    attr_reader :mapping
-
     def initialize(options = { })
+      super
       @url      = options[:url]
       @username = options[:username]
       @password = options[:password]
-
-      @statements = Proxy::Statements.new self
-      @query      = Proxy::Query.new self
-      @geometric  = Proxy::Geometric.new self
-      @mapping    = Proxy::Mapping.new self
     end
 
     def path

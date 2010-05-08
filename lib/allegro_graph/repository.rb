@@ -1,31 +1,19 @@
-require File.join(File.dirname(__FILE__), "proxy", "statements")
-require File.join(File.dirname(__FILE__), "proxy", "query")
-require File.join(File.dirname(__FILE__), "proxy", "geometric")
-require File.join(File.dirname(__FILE__), "proxy", "mapping")
 
 module AllegroGraph
 
   # The Repository class wrap the corresponding resource on the AllegroGraph server. A repository acts as a scope for
   # statements. Simple management methods are provided.
-  class Repository
+  class Repository < Resource
 
     attr_reader   :server
     attr_reader   :catalog
     attr_accessor :name
 
-    attr_reader   :statements
-    attr_reader   :query
-    attr_reader   :geometric
-    attr_reader   :mapping
-
-    def initialize(server_or_catalog, name, options = { })
-      @catalog    = server_or_catalog.is_a?(AllegroGraph::Server) ? server_or_catalog.root_catalog : server_or_catalog
-      @server     = @catalog.server
-      @name       = name
-      @statements = Proxy::Statements.new self
-      @query      = Proxy::Query.new self
-      @geometric  = Proxy::Geometric.new self
-      @mapping    = Proxy::Mapping.new self
+    def initialize(server_or_catalog, name)
+      super
+      @catalog  = server_or_catalog.is_a?(AllegroGraph::Server) ? server_or_catalog.root_catalog : server_or_catalog
+      @server   = @catalog.server
+      @name     = name
     end
 
     def ==(other)

@@ -1,34 +1,21 @@
-require File.join(File.dirname(__FILE__), "proxy", "statements")
-require File.join(File.dirname(__FILE__), "proxy", "query")
-require File.join(File.dirname(__FILE__), "proxy", "geometric")
-require File.join(File.dirname(__FILE__), "proxy", "mapping")
 
 module AllegroGraph
 
   # The Federation class wrap the corresponding resource on the AllegroGraph server. A federation is a collection
   # of many repositories that acts like a single one. Only read access is allowed.
-  class Federation
+  class Federation < Resource
 
     attr_reader   :server
     attr_accessor :name
     attr_accessor :repository_names
     attr_accessor :repository_urls
 
-    attr_reader :statements
-    attr_reader :query
-    attr_reader :geometric
-    attr_reader :mapping
-
     def initialize(server, name, options = { })
+      super
       @server, @name = server, name
 
       @repository_names = options[:repository_names]
       @repository_urls  = options[:repository_urls]
-
-      @statements = Proxy::Statements.new self
-      @query      = Proxy::Query.new self
-      @geometric  = Proxy::Geometric.new self
-      @mapping    = Proxy::Mapping.new self
     end
 
     def ==(other)

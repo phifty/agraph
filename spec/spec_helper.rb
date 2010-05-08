@@ -2,6 +2,7 @@ require 'rubygems'
 gem 'rspec', '1.3.0'
 require 'spec'
 
+require File.join(File.dirname(__FILE__), "..", "lib", "allegro_graph")
 require File.join(File.dirname(__FILE__), "fake_transport_helper")
 
 FakeTransport.enable!

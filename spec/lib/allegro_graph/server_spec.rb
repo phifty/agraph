@@ -18,7 +18,7 @@ describe AllegroGraph::Server do
       other = AllegroGraph::Server.new :host => "other"
       @server.should_not == other
     end
-    
+
   end
 
   describe "request" do
@@ -56,18 +56,6 @@ describe AllegroGraph::Server do
 
     it "should return the catalogs of the server" do
       @server.catalogs.should == [ @server.root_catalog, @catalog ]
-    end
-
-  end
-
-  describe "federations" do
-
-    before :each do
-      @federation = AllegroGraph::Federation.new @server, "test_federation"
-    end
-
-    it "should return the federations of the server" do
-      @server.federations.should include(@federation)
     end
 
   end

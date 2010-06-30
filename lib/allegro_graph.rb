@@ -8,7 +8,6 @@ module AllegroGraph
   autoload :Resource,           File.join(File.dirname(__FILE__), "allegro_graph", "resource")
   autoload :Repository,         File.join(File.dirname(__FILE__), "allegro_graph", "repository")
   autoload :Session,            File.join(File.dirname(__FILE__), "allegro_graph", "session")
-  autoload :Federation,         File.join(File.dirname(__FILE__), "allegro_graph", "federation")
   autoload :Proxy,              File.join(File.dirname(__FILE__), "allegro_graph", "proxy")
   autoload :Utility,            File.join(File.dirname(__FILE__), "allegro_graph", "utility")
 

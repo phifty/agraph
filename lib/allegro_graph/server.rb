@@ -45,11 +45,6 @@ module AllegroGraph
       result
     end
 
-    def federations
-      federations = self.request :get, "/federated", :expected_status_code => 200
-      federations.map { |federation| Federation.new self, federation["id"] }
-    end
-
     def url
       "http://#{@host}:#{@port}"
     end

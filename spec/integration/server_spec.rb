@@ -11,8 +11,8 @@ describe "server" do
 
   it "should return the server's version" do
     @server.version.should == {
-      :version  => "\"4.0.1a\"",
-      :date     => "\"March 10, 2010 10:23:52 GMT-0800\"",
+      :version  => "\"4.0.4\"",
+      :date     => "\"June 10, 2010 17:37:10 GMT-0700\"",
       :revision => "\"[unknown]\""
     }
   end

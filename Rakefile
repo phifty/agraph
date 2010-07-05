@@ -9,8 +9,8 @@ task :default => :spec
 
 specification = Gem::Specification.new do |specification|
   specification.name              = "agraph"
-  specification.version           = "0.1.0"
-  specification.date              = "2010-04-05"
+  specification.version           = "0.1.1"
+  specification.date              = "2010-07-05"
   specification.email             = "b.phifty@gmail.com"
   specification.homepage          = "http://github.com/phifty/agraph"
   specification.summary           = "Client for the AllegroGraph 4.x graph database."

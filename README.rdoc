@@ -1,4 +1,3 @@
-
 = Ruby client for the AllegroGraph RDF graph database
 
 The agraph gem provides a client for the RESTful interface of AllegroGraph RDF graph database version 4.x. This
@@ -92,7 +91,7 @@ To find statements by thier assigned coordinates, the following methods are prov
 
 The previously create statement will be returned by
 
-  repository.geometric.find_inside_box :type      => cartesian_type,
+  repository.statements.find_inside_box :type      => cartesian_type,
                                        :predicate => "<a_predicate>",
                                        :x_min     => 10,
                                        :y_min     => 10,

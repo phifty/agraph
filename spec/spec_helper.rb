@@ -1,12 +1,12 @@
 require 'rubygems'
-gem 'rspec', '1.3.0'
-require 'spec'
+gem 'rspec', '>= 2'
+require 'rspec'
 
 require File.join(File.dirname(__FILE__), "..", "lib", "allegro_graph")
 require File.join(File.dirname(__FILE__), "fake_transport_helper")
 
 FakeTransport.enable!
-Spec::Runner.configure do |configuration|
+RSpec.configure do |configuration|
   configuration.before :each do
     FakeTransport.fake!
   end

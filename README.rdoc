@@ -92,11 +92,11 @@ To find statements by thier assigned coordinates, the following methods are prov
 The previously create statement will be returned by
 
   repository.statements.find_inside_box :type      => cartesian_type,
-                                       :predicate => "<a_predicate>",
-                                       :x_min     => 10,
-                                       :y_min     => 10,
-                                       :x_max     => 30,
-                                       :y_max     => 30
+                                        :predicate => "<a_predicate>",
+                                        :x_min     => 10,
+                                        :y_min     => 10,
+                                        :x_max     => 30,
+                                        :y_max     => 30
 
 == Transactions
 

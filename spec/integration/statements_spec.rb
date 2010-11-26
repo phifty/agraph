@@ -8,8 +8,8 @@ describe "statements" do
   before :each do
     @server = AllegroGraph::Server.new :username => "test", :password => "test"
     @repository = AllegroGraph::Repository.new @server, "test_repository"
-
     @repository.create_if_missing!
+
     @statements = @repository.statements
   end
 

@@ -1,37 +1,38 @@
 require 'rubygems'
-gem 'rspec', '>= 2'
+
+gem 'rspec'
 require 'rspec'
-require "rake/rdoctask"
-require 'rake/gempackagetask'
 require 'rspec/core/rake_task'
+
+gem 'reek'
+require 'reek/rake/task'
+
+require 'rake/rdoctask'
 
 task :default => :spec
 
-specification = Gem::Specification.new do |specification|
-  specification.name              = "agraph"
-  specification.version           = "0.1.2"
-  specification.date              = "2010-11-17"
-  specification.email             = "b.phifty@gmail.com"
-  specification.homepage          = "http://github.com/phifty/agraph"
-  specification.summary           = "Client for the AllegroGraph 4.x graph database."
-  specification.description       = "The gem provides a client for the AllegroGraph 4.x RDF graph database. Features like searching geo-spatial data, type mapping and transactions are supported."
-  specification.rubyforge_project = "agraph"
-  specification.has_rdoc          = true
-  specification.authors           = [ "Philipp Bruell" ]
-  specification.files             = [ "README.rdoc", "Rakefile" ] + Dir["{lib,spec}/**/*"]
-  specification.extra_rdoc_files  = [ "README.rdoc" ]
-  specification.require_path      = "lib"
+namespace :gem do
+
+  desc "Builds the gem"
+  task :build do
+    system "gem build *.gemspec && mkdir -p pkg/ && mv *.gem pkg/"
+  end
+
+  desc "Builds and installs the gem"
+  task :install => :build do
+    system "gem install pkg/"
+  end
+
 end
 
-Rake::GemPackageTask.new(specification) do |package|
-  package.gem_spec = specification
+Reek::Rake::Task.new do |task|
+  task.fail_on_error = true
 end
 
 desc "Generate the rdoc"
 Rake::RDocTask.new do |rdoc|
   rdoc.rdoc_files.add [ "README.rdoc", "lib/**/*.rb" ]
-  rdoc.main   = "README.rdoc"
-  rdoc.title  = "Client for the AllegroGraph 4.x graph database."
+  rdoc.main = "README.rdoc"
 end
 
 desc "Run all specs in spec directory"

@@ -4,6 +4,7 @@ require File.expand_path(File.join(File.dirname(__FILE__), "..", "..", "..", "li
 describe AllegroGraph::Server do
 
   before :each do
+    fake_transport!
     @server = AllegroGraph::Server.new :username => "test", :password => "test"
   end
 
@@ -21,17 +22,32 @@ describe AllegroGraph::Server do
 
   end
 
-  describe "request" do
+  describe "request_http" do
 
     before :each do
-      AllegroGraph::ExtendedTransport.stub!(:request)
+      Transport::HTTP.stub(:request)
     end
 
-    it "should perform an extended request" do
-      AllegroGraph::ExtendedTransport.should_receive(:request).with(
+    it "should perform a http request" do
+      Transport::HTTP.should_receive(:request).with(
         :get, "http://localhost:10035/", hash_including(:expected_status_code => 200)
       ).and_return("test" => "test")
-      @server.request(:get, "/", :expected_status_code => 200).should == { "test" => "test" }
+      @server.request_http(:get, "/", :expected_status_code => 200).should == { "test" => "test" }
+    end
+
+  end
+
+  describe "request_json" do
+
+    before :each do
+      Transport::JSON.stub(:request)
+    end
+
+    it "should perform a json request" do
+      Transport::JSON.should_receive(:request).with(
+        :get, "http://localhost:10035/", hash_including(:expected_status_code => 200)
+      ).and_return("test" => "test")
+      @server.request_json(:get, "/", :expected_status_code => 200).should == { "test" => "test" }
     end
 
   end

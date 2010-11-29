@@ -4,20 +4,36 @@ require File.expand_path(File.join(File.dirname(__FILE__), "..", "..", "..", "li
 describe AllegroGraph::Session do
 
   before :each do
+    fake_transport!
     @session = AllegroGraph::Session.new :url => "http://session:5555", :username => "test", :password => "test"
   end
 
-  describe "request" do
+  describe "request_http" do
 
     before :each do
-      AllegroGraph::ExtendedTransport.stub!(:request)
+      Transport::HTTP.stub(:request)
     end
 
-    it "should perform an extended request" do
-      AllegroGraph::ExtendedTransport.should_receive(:request).with(
+    it "should perform a http request" do
+      Transport::HTTP.should_receive(:request).with(
         :get, "http://session:5555/", hash_including(:expected_status_code => 200)
       ).and_return("test" => "test")
-      @session.request(:get, "/", :expected_status_code => 200).should == { "test" => "test" }
+      @session.request_http(:get, "/", :expected_status_code => 200).should == { "test" => "test" }
+    end
+
+  end
+
+  describe "request_json" do
+
+    before :each do
+      Transport::JSON.stub(:request)
+    end
+
+    it "should perform a json request" do
+      Transport::JSON.should_receive(:request).with(
+        :get, "http://session:5555/", hash_including(:expected_status_code => 200)
+      ).and_return("test" => "test")
+      @session.request_json(:get, "/", :expected_status_code => 200).should == { "test" => "test" }
     end
 
   end
@@ -43,17 +59,15 @@ describe AllegroGraph::Session do
   describe "create" do
 
     before :each do
-      @server = Object.new
-      @server.stub!(:username).and_return("test")
-      @server.stub!(:password).and_return("test")
-      @repository = Object.new
-      @repository.stub!(:path).and_return("/repositories/test_repository")
-      @repository.stub!(:request).and_return("http://session:5555")
-      @repository.stub!(:server).and_return(@server)
+      @server = mock AllegroGraph::Server, :username => "test", :password => "test"
+      @repository = mock AllegroGraph::Repository,
+        :path => "/repositories/test_repository",
+        :request_http => "http://session:5555",
+        :server => @server
     end
 
     it "should request a session" do
-      @repository.should_receive(:request).with(
+      @repository.should_receive(:request_http).with(
         :post, "/repositories/test_repository/session", :expected_status_code => 200
       ).and_return("http://session:5555")
       AllegroGraph::Session.create @repository

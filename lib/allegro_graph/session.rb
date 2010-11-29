@@ -19,24 +19,27 @@ module AllegroGraph
       ""
     end
 
-    def request(http_method, path, options = { })
-      ExtendedTransport.request http_method, self.url + path, credentials.merge(options)
+    def request_http(http_method, path, options = { })
+      ::Transport::HTTP.request http_method, self.url + path, credentials.merge(options)
+    end
+
+    def request_json(http_method, path, options = { })
+      ::Transport::JSON.request http_method, self.url + path, credentials.merge(options)
     end
 
     def commit
-      self.request :post, "/commit", :expected_status_code => 204
+      self.request_http :post, "/commit", :expected_status_code => 204
       true
     end
 
     def rollback
-      self.request :post, "/rollback", :expected_status_code => 204
+      self.request_http :post, "/rollback", :expected_status_code => 204
       true
     end
 
     def self.create(repository)
-      url = repository.request :post, repository.path + "/session", :expected_status_code => 200
-      url.sub! /^"/, ""
-      url.sub! /"$/, ""
+      response = repository.request_http :post, repository.path + "/session", :expected_status_code => 200
+      url = response.sub(/^"/, "").sub(/"$/, "")
       server = repository.server
       new :url => url, :username => server.username, :password => server.password
     end
@@ -46,7 +49,7 @@ module AllegroGraph
     def credentials
       { :auth_type => :basic, :username => @username, :password => @password }
     end
-    
+
   end
 
 end

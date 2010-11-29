@@ -3,8 +3,6 @@ require File.expand_path(File.join(File.dirname(__FILE__), "..", "..", "lib", "a
 
 describe "query" do
 
-  use_real_transport!
-
   before :each do
     @server = AllegroGraph::Server.new :username => "test", :password => "test"
     @repository = AllegroGraph::Repository.new @server, "test_repository"

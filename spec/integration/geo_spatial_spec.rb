@@ -62,7 +62,10 @@ describe "geo-spatial data" do
                                         :x_max       => 20.0,
                                         :y_max       => 20.0
       @statements.create "\"test_subject\"", "\"at\"", "\"+10+10\"^^#{@type}"
+      @statement_one = [ "\"test_subject\"", "\"at\"", "\"+10.000000000931323+10.000000000931323\"^^#{@type}"]
+
       @statements.create "\"another_subject\"", "\"at\"", "\"+15+15\"^^#{@type}"
+      @statement_two = [ "\"another_subject\"", "\"at\"", "\"+15.000000000465661+15.000000000465661\"^^#{@type}"]
     end
 
     it "should find objects inside a box" do
@@ -72,8 +75,8 @@ describe "geo-spatial data" do
                                            :y_min      => 8.0,
                                            :x_max      => 11.0,
                                            :y_max      => 11.0
-      result.should include([ "\"test_subject\"", "\"at\"", "\"+10.000000000931323+10.000000000931323\"^^#{@type}"])
-      result.should_not include([ "\"another_subject\"", "\"at\"", "\"+15.000000000465661+15.000000000465661\"^^#{@type}"])
+      result.should include(@statement_one)
+      result.should_not include(@statement_two)
     end
 
     it "should find objects inside a circle" do
@@ -82,31 +85,20 @@ describe "geo-spatial data" do
                                               :x         => 9.0,
                                               :y         => 9.0,
                                               :radius    => 2.0
-      result.should include([ "\"test_subject\"", "\"at\"", "\"+10.000000000931323+10.000000000931323\"^^#{@type}"])
-      result.should_not include([ "\"another_subject\"", "\"at\"", "\"+15.000000000465661+15.000000000465661\"^^#{@type}"])
+      result.should include(@statement_one)
+      result.should_not include(@statement_two)
     end
 
-    context "with a defined polygon" do
+    it "should find objects inside that polygon" do
+      @geometric.create_polygon [ [ 5.0, 5.0 ], [ 5.0, 12.0 ], [ 12.0, 12.0 ], [ 12.0, 5.0 ] ],
+                                :name => "test_polygon",
+                                :type => @type
 
-      before :each do
-        @type = @geometric.cartesian_type :strip_width => 1,
-                                          :x_min       => -100,
-                                          :y_min       => -100,
-                                          :x_max       => 100,
-                                          :y_max       => 100
-        @statements.create "\"test_subject\"", "\"at\"", "\"+1+1\"^^#{@type}"
-        @geometric.create_polygon [ [ 0, -100 ], [ 0, 100 ], [ 100, 100 ], [ 100, -100 ] ],
-                                  :name => "test_polygon",
-                                  :type => @type
-      end
-
-      it "should find objects inside that polygon" do
-        result = @statements.find_inside_polygon :type         => @type,
-                                                 :predicate    => "\"at\"",
-                                                 :polygon_name => "test_polygon"
-        result.should include([ "\"test_subject\"", "\"at\"", "\"+0.9999999776482582+0.9999999776482582\"^^<http://franz.com/ns/allegrograph/3.0/geospatial/cartesian/-100.0/100.0/-100.0/100.0/1.0>"])
-      end
-
+      result = @statements.find_inside_polygon :type         => @type,
+                                               :predicate    => "\"at\"",
+                                               :polygon_name => "test_polygon"
+      result.should include(@statement_one)
+      result.should_not include(@statement_two)
     end
 
   end

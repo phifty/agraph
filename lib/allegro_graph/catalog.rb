@@ -31,7 +31,7 @@ module AllegroGraph
     end
 
     def repositories
-      repositories = @server.request :get, self.path + "/repositories", :expected_status_code => 200
+      repositories = @server.request_json :get, self.path + "/repositories", :expected_status_code => 200
       repositories.map { |repository| Repository.new self, repository["id"] }
     end
 

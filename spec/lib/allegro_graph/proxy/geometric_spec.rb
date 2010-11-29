@@ -4,6 +4,7 @@ require File.expand_path(File.join(File.dirname(__FILE__), "..", "..", "..", "..
 describe AllegroGraph::Proxy::Geometric do
 
   before :each do
+    fake_transport!
     @server = AllegroGraph::Server.new :username => "test", :password => "test"
     @catalog = AllegroGraph::Catalog.new @server, "test_catalog"
     @repository = AllegroGraph::Repository.new @catalog, "test_repository"

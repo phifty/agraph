@@ -4,6 +4,7 @@ require File.expand_path(File.join(File.dirname(__FILE__), "..", "..", "..", "li
 describe AllegroGraph::Catalog do
 
   before :each do
+    fake_transport!
     @server = AllegroGraph::Server.new :username => "test", :password => "test"
     @catalog = AllegroGraph::Catalog.new @server, "test_catalog"
   end
@@ -79,7 +80,7 @@ describe AllegroGraph::Catalog do
     it "should return the catalog's repositories" do
       @catalog.repositories.should == [ @repository ]
     end
-    
+
   end
 
 end

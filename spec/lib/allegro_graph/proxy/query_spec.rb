@@ -4,6 +4,7 @@ require File.expand_path(File.join(File.dirname(__FILE__), "..", "..", "..", "..
 describe AllegroGraph::Proxy::Query do
 
   before :each do
+    fake_transport!
     @server = AllegroGraph::Server.new :username => "test", :password => "test"
     @catalog = AllegroGraph::Catalog.new @server, "test_catalog"
     @repository = AllegroGraph::Repository.new @catalog, "test_repository"
@@ -48,7 +49,7 @@ describe AllegroGraph::Proxy::Query do
       }
     end
 
-    it "should return the query result" do
+    it "should return the prolog query result" do
       @query.language = :prolog
       result = @query.perform "(select (?subject) (q- ?subject !<http://xmlns.com/foaf/0.1/knows> ?object))"
       result.should == {

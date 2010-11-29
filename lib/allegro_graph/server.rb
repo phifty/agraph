@@ -1,3 +1,4 @@
+require 'logger'
 
 module AllegroGraph
 
@@ -23,21 +24,25 @@ module AllegroGraph
       other.is_a?(self.class) && @host == other.host && @port == other.port
     end
 
-    def request(http_method, path, options = { })
-      ExtendedTransport.request http_method, self.url + path, credentials.merge(options)
+    def request_http(http_method, path, options = { })
+      ::Transport::HTTP.request http_method, (self.url + path), credentials.merge(options)
+    end
+
+    def request_json(http_method, path, options = { })
+      ::Transport::JSON.request http_method, self.url + path, credentials.merge(options).merge(:logger => Logger.new(STDOUT))
     end
 
     def version
       {
-        :version  => self.request(:get, "/version",          :expected_status_code => 200),
-        :date     => self.request(:get, "/version/date",     :expected_status_code => 200),
-        :revision => self.request(:get, "/version/revision", :expected_status_code => 200)
+        :version  => self.request_http(:get, "/version",          :expected_status_code => 200),
+        :date     => self.request_http(:get, "/version/date",     :expected_status_code => 200),
+        :revision => self.request_http(:get, "/version/revision", :expected_status_code => 200)
       }
     end
 
     def catalogs
       result = [ @root_catalog ]
-      catalogs = self.request :get, "/catalogs", :expected_status_code => 200
+      catalogs = self.request_json :get, "/catalogs", :expected_status_code => 200
       catalogs.each do |catalog|
         id = catalog["id"]
         result << Catalog.new(self, id.sub(/^\//, "")) unless id == "/"

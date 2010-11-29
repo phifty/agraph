@@ -4,6 +4,7 @@ require File.expand_path(File.join(File.dirname(__FILE__), "..", "..", "..", "..
 describe AllegroGraph::Proxy::Statements do
 
   before :each do
+    fake_transport!
     @server = AllegroGraph::Server.new :username => "test", :password => "test"
     @catalog = AllegroGraph::Catalog.new @server, "test_catalog"
     @repository = AllegroGraph::Repository.new @catalog, "test_repository"
@@ -20,7 +21,7 @@ describe AllegroGraph::Proxy::Statements do
     it "should return the correct path" do
       @statements.path.should == @repository.path
     end
-    
+
   end
 
   describe "create" do

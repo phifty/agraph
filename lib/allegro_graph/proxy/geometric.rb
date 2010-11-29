@@ -19,7 +19,7 @@ module AllegroGraph
 
       def cartesian_type(parameters = { })
         parameters = Utility::ParameterMapper.map parameters, :cartesian_type
-        type = @resource.request :post, self.path + "/types/cartesian", :parameters => parameters, :expected_status_code => 200
+        type = @resource.request_http :post, self.path + "/types/cartesian", :parameters => parameters, :expected_status_code => 200
         type.sub! /^.*</, "<"
         type.sub! />.*$/, ">"
         type
@@ -27,7 +27,7 @@ module AllegroGraph
 
       def spherical_type(parameters = { })
         parameters = Utility::ParameterMapper.map parameters, :spherical_type
-        type = @resource.request :post, self.path + "/types/spherical", :parameters => parameters, :expected_status_code => 200
+        type = @resource.request_http :post, self.path + "/types/spherical", :parameters => parameters, :expected_status_code => 200
         type.sub! /^.*</, "<"
         type.sub! />.*$/, ">"
         type
@@ -40,7 +40,7 @@ module AllegroGraph
         raise ArgumentError, "at least three points has to defined" unless points.is_a?(Array) && points.size >= 3
         parameters[:point] = points.map{ |point| "\"%+g%+g\"^^%s" % [ point[0], point[1], type ] }
 
-        @resource.request :put, self.path + "/polygon", :parameters => parameters, :expected_status_code => 204
+        @resource.request_json :put, self.path + "/polygon", :parameters => parameters, :expected_status_code => 204
         true
       end
 

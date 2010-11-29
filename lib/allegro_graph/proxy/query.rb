@@ -29,7 +29,7 @@ module AllegroGraph
 
       def perform(query)
         parameters = { :query => query, :queryLn => @language.to_s }
-        @resource.request :get, self.path, :parameters => parameters, :expected_status_code => 200
+        @resource.request_json :get, self.path, :parameters => parameters, :expected_status_code => 200
       end
 
     end

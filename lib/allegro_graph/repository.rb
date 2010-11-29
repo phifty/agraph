@@ -24,8 +24,12 @@ module AllegroGraph
       "#{@catalog.path}/repositories/#{@name}"
     end
 
-    def request(http_method, path, options = { })
-      @server.request http_method, path, options
+    def request_http(*arguments)
+      @server.request_http *arguments
+    end
+
+    def request_json(*arguments)
+      @server.request_json *arguments
     end
 
     def exists?
@@ -33,9 +37,9 @@ module AllegroGraph
     end
 
     def create!
-      @server.request :put, self.path, :expected_status_code => 204
+      @server.request_http :put, self.path, :expected_status_code => 204
       true
-    rescue ExtendedTransport::UnexpectedStatusCodeError => error
+    rescue ::Transport::UnexpectedStatusCodeError => error
       return false if error.status_code == 400
       raise error
     end
@@ -45,9 +49,9 @@ module AllegroGraph
     end
 
     def delete!
-      @server.request :delete, self.path, :expected_status_code => 200
+      @server.request_http :delete, self.path, :expected_status_code => 200
       true
-    rescue ExtendedTransport::UnexpectedStatusCodeError => error
+    rescue ::Transport::UnexpectedStatusCodeError => error
       return false if error.status_code == 400
       raise error
     end
@@ -57,7 +61,7 @@ module AllegroGraph
     end
 
     def size
-      response = @server.request :get, self.path + "/size", :type => :text, :expected_status_code => 200
+      response = @server.request_http :get, self.path + "/size", :type => :text, :expected_status_code => 200
       response.to_i
     end
 
@@ -73,7 +77,7 @@ module AllegroGraph
         session.rollback
         raise error
       end
-      session.commit      
+      session.commit
     end
 
   end

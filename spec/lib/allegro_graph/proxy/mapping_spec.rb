@@ -4,6 +4,7 @@ require File.expand_path(File.join(File.dirname(__FILE__), "..", "..", "..", "..
 describe AllegroGraph::Proxy::Geometric do
 
   before :each do
+    fake_transport!
     @server = AllegroGraph::Server.new :username => "test", :password => "test"
     @catalog = AllegroGraph::Catalog.new @server, "test_catalog"
     @repository = AllegroGraph::Repository.new @catalog, "test_repository"
@@ -24,7 +25,7 @@ describe AllegroGraph::Proxy::Geometric do
       result = @mapping.create "<time>", "<http://www.w3.org/2001/XMLSchema#dateTime>"
       result.should be_true
     end
-    
+
   end
 
   describe "delete" do

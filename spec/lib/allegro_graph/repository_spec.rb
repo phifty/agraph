@@ -4,9 +4,10 @@ require File.expand_path(File.join(File.dirname(__FILE__), "..", "..", "..", "li
 describe AllegroGraph::Repository do
 
   before :each do
+    fake_transport!
     @server = AllegroGraph::Server.new :username => "test", :password => "test"
     @catalog = AllegroGraph::Catalog.new @server, "test_catalog"
-    @repository = AllegroGraph::Repository.new @catalog, "test_repository"    
+    @repository = AllegroGraph::Repository.new @catalog, "test_repository"
   end
 
   describe "==" do
@@ -31,15 +32,28 @@ describe AllegroGraph::Repository do
 
   end
 
-  describe "request" do
+  describe "request_http" do
 
     before :each do
-      @server.stub!(:request)
+      @server.stub(:request_http)
     end
 
     it "should call the server's request method" do
-      @server.should_receive(:request).with(:get, "/", { })
-      @repository.request :get, "/"
+      @server.should_receive(:request_http).with(:get, "/", { })
+      @repository.request_http :get, "/", { }
+    end
+
+  end
+
+  describe "request_json" do
+
+    before :each do
+      @server.stub(:request_json)
+    end
+
+    it "should call the server's request method" do
+      @server.should_receive(:request_json).with(:get, "/", { })
+      @repository.request_json :get, "/", { }
     end
 
   end
@@ -130,6 +144,11 @@ describe AllegroGraph::Repository do
         @repository.delete!.should be_true
       end
 
+      it "should return true even if a #{Transport::JSON::ParserError} is raised" do
+        @server.stub(:request).and_raise(Transport::JSON::ParserError)
+        @repository.delete!.should be_true
+      end
+
     end
 
     context "for a repository that not exists" do
@@ -181,7 +200,7 @@ describe AllegroGraph::Repository do
     it "should return the number of statements" do
       @repository.size.should == 3
     end
-    
+
   end
 
   describe "transaction" do

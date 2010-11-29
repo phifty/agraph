@@ -18,13 +18,13 @@ module AllegroGraph
 
       def create(type, encoding)
         parameters = { :type => type, :encoding => encoding }
-        @resource.request :put, self.path + "/type", :parameters => parameters, :expected_status_code => 204
+        @resource.request_http :put, self.path + "/type", :parameters => parameters, :expected_status_code => 204
         true
       end
 
       def delete(type)
         parameters = { :type => type }
-        @resource.request :delete, self.path + "/type", :parameters => parameters, :expected_status_code => 204
+        @resource.request_http :delete, self.path + "/type", :parameters => parameters, :expected_status_code => 204
         true
       end
 

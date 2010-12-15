@@ -47,7 +47,7 @@ describe "geo-spatial data" do
     end
 
     it "should return true" do
-      result = @geometric.create_polygon @polygon, :name => "test_polygon", :type => @type
+      result = @geometric.create_cartesian_polygon @polygon, :name => "test_polygon", :type => @type
       result.should be_true
     end
 
@@ -90,9 +90,9 @@ describe "geo-spatial data" do
     end
 
     it "should find objects inside that polygon" do
-      @geometric.create_polygon [ [ 5.0, 5.0 ], [ 5.0, 12.0 ], [ 12.0, 12.0 ], [ 12.0, 5.0 ] ],
-                                :name => "test_polygon",
-                                :type => @type
+      @geometric.create_cartesian_polygon [ [ 5.0, 5.0 ], [ 5.0, 12.0 ], [ 12.0, 12.0 ], [ 12.0, 5.0 ] ],
+                                          :name => "test_polygon",
+                                          :type => @type
 
       result = @statements.find_inside_polygon :type         => @type,
                                                :predicate    => "\"at\"",
@@ -112,6 +112,10 @@ describe "geo-spatial data" do
                                         :latitude_max  => 20.0,
                                         :longitude_max => 20.0
       @statements.create "\"test_subject\"", "\"at\"", "\"+10.00+010.00\"^^#{@type}"
+      @statement_one = [ "\"test_subject\"", "\"at\"", "\"+100000+0100000\"^^#{@type}"]
+
+      @statements.create "\"another_subject\"", "\"at\"", "\"+15.00+015.00\"^^#{@type}"
+      @statement_two = [ "\"another_subject\"", "\"at\"", "\"+150000+0150000\"^^#{@type}"]
     end
 
     it "should find objects inside a haversine" do
@@ -121,7 +125,20 @@ describe "geo-spatial data" do
                                                  :longitude  => 9.0,
                                                  :radius     => 200.0,
                                                  :unit       => :km
-      result.should include([ "\"test_subject\"", "\"at\"", "\"+100000+0100000\"^^<http://franz.com/ns/allegrograph/3.0/geospatial/spherical/degrees/2.0/20.0/2.0/20.0/1.0>"])
+      result.should include(@statement_one)
+      result.should_not include(@statement_two)
+    end
+
+    it "should find objects inside that polygon" do
+      @geometric.create_spherical_polygon [ [ 5.0, 5.0 ], [ 5.0, 12.0 ], [ 12.0, 12.0 ], [ 12.0, 5.0 ] ],
+                                          :name => "test_polygon",
+                                          :type => @type
+
+      result = @statements.find_inside_polygon :type         => @type,
+                                               :predicate    => "\"at\"",
+                                               :polygon_name => "test_polygon"
+      result.should include(@statement_one)
+      result.should_not include(@statement_two)
     end
 
   end

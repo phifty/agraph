@@ -190,6 +190,19 @@
     :code:      "204"
     :body:      ""
 -
+  :http_method: "put"
+  :url:         "http://localhost:10035/catalogs/test_catalog/repositories/test_repository/geo/polygon"
+  :parameters:
+    :resource:    "\"test_polygon\""
+    :point:
+      - "\"+02.0000000+002.0000000\"^^<http://franz.com/ns/allegrograph/3.0/geospatial/cartesian/2.0/20.0/2.0/20.0/1.0>"
+      - "\"+10.0000000+002.0000000\"^^<http://franz.com/ns/allegrograph/3.0/geospatial/cartesian/2.0/20.0/2.0/20.0/1.0>"
+      - "\"+10.0000000+010.0000000\"^^<http://franz.com/ns/allegrograph/3.0/geospatial/cartesian/2.0/20.0/2.0/20.0/1.0>"
+      - "\"+02.0000000+010.0000000\"^^<http://franz.com/ns/allegrograph/3.0/geospatial/cartesian/2.0/20.0/2.0/20.0/1.0>"
+  :response:
+    :code:      "204"
+    :body:      ""
+-
   :http_method: "get"
   :url:         "http://localhost:10035/catalogs/test_catalog/repositories/test_repository/geo/box"
   :parameters:

@@ -50,14 +50,27 @@ describe AllegroGraph::Proxy::Geometric do
 
   end
 
-  describe "create_polygon" do
+  describe "create_cartesian_polygon" do
 
     before :each do
       @polygon = [ [ 2.0, 2.0 ], [ 10.0, 2.0 ], [ 10.0, 10.0 ], [ 2.0, 10.0 ] ]
     end
 
     it "should create a polygon" do
-      result = @geometric.create_polygon @polygon, :name => "test_polygon", :type => @type
+      result = @geometric.create_cartesian_polygon @polygon, :name => "test_polygon", :type => @type
+      result.should be_true
+    end
+
+  end
+
+  describe "create_spherical_polygon" do
+
+    before :each do
+      @polygon = [ [ 2.0, 2.0 ], [ 10.0, 2.0 ], [ 10.0, 10.0 ], [ 2.0, 10.0 ] ]
+    end
+
+    it "should create a polygon" do
+      result = @geometric.create_spherical_polygon @polygon, :name => "test_polygon", :type => @type
       result.should be_true
     end
 

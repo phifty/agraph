@@ -33,12 +33,28 @@ module AllegroGraph
         type
       end
 
-      def create_polygon(points, parameters = { })
+      def create_cartesian_polygon(points, parameters = { })
         type = parameters.delete :type
         parameters = Utility::ParameterMapper.map parameters, :create_polygon
 
         raise ArgumentError, "at least three points has to defined" unless points.is_a?(Array) && points.size >= 3
         parameters[:point] = points.map{ |point| "\"%+g%+g\"^^%s" % [ point[0], point[1], type ] }
+
+        @resource.request_json :put, self.path + "/polygon", :parameters => parameters, :expected_status_code => 204
+        true
+      end
+
+      def create_spherical_polygon(points, parameters = { })
+        type = parameters.delete :type
+        parameters = Utility::ParameterMapper.map parameters, :create_polygon
+
+        raise ArgumentError, "at least three points has to defined" unless points.is_a?(Array) && points.size >= 3
+        parameters[:point] = points.map do |point|
+          "\"" +
+            Utility::ParameterMapper.latitude_to_iso(point[0]) +
+            Utility::ParameterMapper.longitude_to_iso(point[1]) +
+            "\"^^#{type}"
+        end
 
         @resource.request_json :put, self.path + "/polygon", :parameters => parameters, :expected_status_code => 204
         true

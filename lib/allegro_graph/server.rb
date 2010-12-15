@@ -1,4 +1,3 @@
-require 'logger'
 
 module AllegroGraph
 
@@ -29,7 +28,7 @@ module AllegroGraph
     end
 
     def request_json(http_method, path, options = { })
-      ::Transport::JSON.request http_method, self.url + path, credentials.merge(options).merge(:logger => Logger.new(STDOUT))
+      ::Transport::JSON.request http_method, self.url + path, credentials.merge(options)
     end
 
     def version

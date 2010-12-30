@@ -149,3 +149,8 @@ More examples can be found in the integration specs (spec/integration)
 Any contribution - especially bug reports - is welcome.
 
 Fork or send mail to b.phifty@gmail.com
+
+== Support
+
+Apart from contribution, support via
+Flattr[http://flattr.com/thing/108992/Ruby-client-for-the-AllegroGraph-RDF-graph-database] is welcome.

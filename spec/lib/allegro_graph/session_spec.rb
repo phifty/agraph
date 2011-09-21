@@ -55,6 +55,14 @@ describe AllegroGraph::Session do
     end
 
   end
+  
+  describe "size" do
+
+    it "should return the number of statements" do
+      @session.size.should == 6
+    end
+
+  end
 
   describe "create" do
 

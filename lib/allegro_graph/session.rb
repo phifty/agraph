@@ -36,6 +36,11 @@ module AllegroGraph
       self.request_http :post, "/rollback", :expected_status_code => 204
       true
     end
+    
+    def size
+      response = self.request_http :get, "/size", :type => :text, :expected_status_code => 200
+      response.to_i
+    end
 
     def self.create(repository_or_server, options = nil)
       response = repository_or_server.request_http :post, repository_or_server.path + "/session", { :expected_status_code => 200, :parameters => options }

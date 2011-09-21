@@ -37,10 +37,10 @@ module AllegroGraph
       true
     end
 
-    def self.create(repository)
-      response = repository.request_http :post, repository.path + "/session", :expected_status_code => 200
+    def self.create(repository_or_server, options = nil)
+      response = repository_or_server.request_http :post, repository_or_server.path + "/session", { :expected_status_code => 200, :parameters => options }
       url = response.sub(/^"/, "").sub(/"$/, "")
-      server = repository.server
+      server = repository_or_server.server
       new :url => url, :username => server.username, :password => server.password
     end
 

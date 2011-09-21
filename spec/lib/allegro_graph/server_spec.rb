@@ -21,6 +21,14 @@ describe AllegroGraph::Server do
     end
 
   end
+  
+  describe "server" do
+    
+    it "should return the server itself" do
+      @server.server.should == @server
+    end
+    
+  end
 
   describe "request_http" do
 

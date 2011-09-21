@@ -60,26 +60,26 @@ describe AllegroGraph::Session do
 
     before :each do
       @server = mock AllegroGraph::Server, :username => "test", :password => "test"
-      @repository = mock AllegroGraph::Repository,
+      @repository_or_server = mock AllegroGraph::Repository,
         :path => "/repositories/test_repository",
         :request_http => "http://session:5555",
         :server => @server
     end
 
     it "should request a session" do
-      @repository.should_receive(:request_http).with(
-        :post, "/repositories/test_repository/session", :expected_status_code => 200
+      @repository_or_server.should_receive(:request_http).with(
+        :post, "/repositories/test_repository/session", { :expected_status_code => 200, :parameters => nil }
       ).and_return("http://session:5555")
-      AllegroGraph::Session.create @repository
+      AllegroGraph::Session.create @repository_or_server
     end
 
     it "should return a session" do
-      result = AllegroGraph::Session.create @repository
+      result = AllegroGraph::Session.create @repository_or_server
       result.should be_instance_of(AllegroGraph::Session)
     end
 
     it "should set the correct values" do
-      result = AllegroGraph::Session.create @repository
+      result = AllegroGraph::Session.create @repository_or_server
       result.url.should == "http://session:5555"
       result.username.should == "test"
       result.password.should == "test"

@@ -21,6 +21,18 @@ module AllegroGraph
 
     def ==(other)
       other.is_a?(self.class) && @host == other.host && @port == other.port
+    end    
+    
+    def url
+      "http://#{@host}:#{@port}"
+    end
+    
+    def path
+      ""
+    end
+    
+    def server
+      self
     end
 
     def request_http(http_method, path, options = { })
@@ -47,10 +59,6 @@ module AllegroGraph
         result << Catalog.new(self, id.sub(/^\//, "")) unless id == "/"
       end
       result
-    end
-
-    def url
-      "http://#{@host}:#{@port}"
     end
 
     private

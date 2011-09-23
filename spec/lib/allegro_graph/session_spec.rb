@@ -55,7 +55,7 @@ describe AllegroGraph::Session do
     end
 
   end
-  
+
   describe "size" do
 
     it "should return the number of statements" do
@@ -67,27 +67,51 @@ describe AllegroGraph::Session do
   describe "create" do
 
     before :each do
-      @server = mock AllegroGraph::Server, :username => "test", :password => "test"
-      @repository_or_server = mock AllegroGraph::Repository,
+      @server = mock AllegroGraph::Server,
+        :username => "test",
+        :password => "test",
+        :path => ""
+      @server.stub(:server).and_return(@server)
+      @repository = mock AllegroGraph::Repository,
         :path => "/repositories/test_repository",
         :request_http => "http://session:5555",
         :server => @server
     end
 
-    it "should request a session" do
-      @repository_or_server.should_receive(:request_http).with(
-        :post, "/repositories/test_repository/session", { :expected_status_code => 200, :parameters => nil }
+    it "should request a session on a store using the repository" do
+      @repository.should_receive(:request_http).with(
+        :post, "/repositories/test_repository/session", { :expected_status_code => 200, :parameters => { :autoCommit => true } }
       ).and_return("http://session:5555")
-      AllegroGraph::Session.create @repository_or_server
+      AllegroGraph::Session.create @repository, :autoCommit => true
+    end
+
+    it "should request a session on a store using the server" do
+      @server.should_receive(:request_http).with(
+        :post, "/session", { :expected_status_code => 200, :parameters => { :store => '<store_x>' } }
+      ).and_return("http://session:5555")
+      AllegroGraph::Session.create @server, :store => 'store_x'
+    end
+
+    it "should request a session on a federated store" do
+      @server.should_receive(:request_http).with(
+        :post, "/session", { :expected_status_code => 200, :parameters => { :store => '<store_x>+<store_y>' } }
+      ).and_return("http://session:5555")
+      AllegroGraph::Session.create @server, :store => ['store_x', 'store_y']
+    end
+
+    it "should raise an error if no store is supplied" do
+      lambda do
+        AllegroGraph::Session.create @server
+      end.should raise_error(ArgumentError)
     end
 
     it "should return a session" do
-      result = AllegroGraph::Session.create @repository_or_server
+      result = AllegroGraph::Session.create @repository
       result.should be_instance_of(AllegroGraph::Session)
     end
 
     it "should set the correct values" do
-      result = AllegroGraph::Session.create @repository_or_server
+      result = AllegroGraph::Session.create @repository
       result.url.should == "http://session:5555"
       result.username.should == "test"
       result.password.should == "test"

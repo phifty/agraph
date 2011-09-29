@@ -56,7 +56,19 @@
   :http_method: "put"
   :url:         "http://localhost:10035/catalogs/not_existing"
   :response:
-    :code:      "201"
+    :code:      "204"
+    :body:      ""
+-
+  :http_method: "delete"
+  :url:         "http://localhost:10035/catalogs/test_catalog"
+  :response:
+    :code:      "204"
+    :body:      ""
+-
+  :http_method: "delete"
+  :url:         "http://localhost:10035/catalogs/not_existing"
+  :response:
+    :code:      "400"
     :body:      ""
 -
   :http_method: "get"

@@ -65,11 +65,11 @@ module AllegroGraph
       response.to_i
     end
 
-    def transaction(options={}, &block)
+    def transaction(options = { }, &block)
       self.class.transaction self, options, &block
     end
 
-    def self.transaction(repository, options={}, &block)
+    def self.transaction(repository, options = { }, &block)
       session = Session.create repository, options
       begin
         session.instance_eval &block

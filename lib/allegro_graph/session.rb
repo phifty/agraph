@@ -37,11 +37,35 @@ module AllegroGraph
       true
     end
 
-    def self.create(repository)
-      response = repository.request_http :post, repository.path + "/session", :expected_status_code => 200
-      url = response.sub(/^"/, "").sub(/"$/, "")
-      server = repository.server
-      new :url => url, :username => server.username, :password => server.password
+    def size
+      response = self.request_http :get, "/size", :type => :text, :expected_status_code => 200
+      response.to_i
+    end
+
+    class << self
+
+      def create(repository_or_server, options={})
+        response = repository_or_server.request_http :post, repository_or_server.path + "/session", { :expected_status_code => 200, :parameters => parse_session_options(options, repository_or_server.path.empty?) }
+        url = response.sub(/^"/, "").sub(/"$/, "")
+        server = repository_or_server.server
+        new :url => url, :username => server.username, :password => server.password
+      end
+
+      def parse_session_options(opts, store_required)
+        opts ||= {}
+        options = {}
+        if store_required
+          raise ArgumentError.new('The parameter store is required') unless opts.has_key?(:store)
+          options[:store] = opts[:store].is_a?(Array) ? "<#{opts[:store].join('>+<')}>" : "<#{opts[:store].to_s}>"
+        end
+        # See http://www.franz.com/agraph/support/documentation/current/http-protocol.html#sessions
+        [:autoCommit, :lifetime, :loadInitFile, :script].each do |p|
+          options[p] = opts[p] if opts.has_key?(p)
+        end
+        options
+      end
+      private :parse_session_options
+
     end
 
     private

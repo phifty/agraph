@@ -65,12 +65,12 @@ module AllegroGraph
       response.to_i
     end
 
-    def transaction(&block)
-      self.class.transaction self, &block
+    def transaction(options={}, &block)
+      self.class.transaction self, options, &block
     end
 
-    def self.transaction(repository, &block)
-      session = Session.create repository
+    def self.transaction(repository, options={}, &block)
+      session = Session.create repository, options
       begin
         session.instance_eval &block
       rescue Object => error

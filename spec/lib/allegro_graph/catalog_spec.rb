@@ -71,6 +71,119 @@ describe AllegroGraph::Catalog do
 
   end
 
+  describe "create!" do
+
+    context "for a catalog that already exists" do
+
+      it "should return false" do
+        @catalog.create!.should be_false
+      end
+
+    end
+
+    context "for a catalog that not exists" do
+
+      before :each do
+        @catalog.name = "not_existing"
+      end
+
+      it "should return true" do
+        @catalog.create!.should be_true
+      end
+
+    end
+
+  end
+
+  describe "create_if_missing!" do
+
+    context "for a catalog that already exists" do
+
+      before :each do
+        @catalog.stub!(:exists?).and_return(true)
+      end
+
+      it "should do nothing" do
+        @catalog.should_not_receive(:create!)
+        @catalog.create_if_missing!
+      end
+
+    end
+
+    context "for a catalog that not exists" do
+
+      before :each do
+        @catalog.stub!(:exists?).and_return(false)
+      end
+
+      it "should call create!" do
+        @catalog.should_receive(:create!)
+        @catalog.create_if_missing!
+      end
+
+    end
+
+  end
+
+  describe "delete!" do
+
+    context "for a catalog that already exists" do
+
+      it "should return true" do
+        @catalog.delete!.should be_true
+      end
+
+      it "should return true even if a #{Transport::JSON::ParserError} is raised" do
+        @catalog.stub(:request).and_raise(Transport::JSON::ParserError)
+        @catalog.delete!.should be_true
+      end
+
+    end
+
+    context "for a catalog that not exists" do
+
+      before :each do
+        @catalog.name = "not_existing"
+      end
+
+      it "should return false" do
+        @catalog.delete!.should be_false
+      end
+
+    end
+
+  end
+
+  describe "delete_if_exists!" do
+
+    context "for a catalog that already exists" do
+
+      before :each do
+        @catalog.stub!(:exists?).and_return(true)
+      end
+
+      it "should call delete!" do
+        @catalog.should_receive(:delete!)
+        @catalog.delete_if_exists!
+      end
+
+    end
+
+    context "for a catalog that not exists" do
+
+      before :each do
+        @catalog.stub!(:exists?).and_return(false)
+      end
+
+      it "should do nothing" do
+        @catalog.should_not_receive(:delete!)
+        @catalog.delete_if_exists!
+      end
+
+    end
+
+  end
+
   describe "repositories" do
 
     before :each do

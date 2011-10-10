@@ -56,21 +56,53 @@ describe AllegroGraph::Session do
 
   end
 
+  describe "size" do
+
+    it "should return the number of statements" do
+      @session.size.should == 6
+    end
+
+  end
+
   describe "create" do
 
     before :each do
-      @server = mock AllegroGraph::Server, :username => "test", :password => "test"
+      @server = mock AllegroGraph::Server,
+        :username => "test",
+        :password => "test",
+        :path => ""
+      @server.stub(:server).and_return(@server)
       @repository = mock AllegroGraph::Repository,
         :path => "/repositories/test_repository",
         :request_http => "http://session:5555",
         :server => @server
     end
 
-    it "should request a session" do
+    it "should request a session on a store using the repository" do
       @repository.should_receive(:request_http).with(
-        :post, "/repositories/test_repository/session", :expected_status_code => 200
+        :post, "/repositories/test_repository/session", { :expected_status_code => 200, :parameters => { :autoCommit => true } }
       ).and_return("http://session:5555")
-      AllegroGraph::Session.create @repository
+      AllegroGraph::Session.create @repository, :autoCommit => true
+    end
+
+    it "should request a session on a store using the server" do
+      @server.should_receive(:request_http).with(
+        :post, "/session", { :expected_status_code => 200, :parameters => { :store => '<store_x>' } }
+      ).and_return("http://session:5555")
+      AllegroGraph::Session.create @server, :store => 'store_x'
+    end
+
+    it "should request a session on a federated store" do
+      @server.should_receive(:request_http).with(
+        :post, "/session", { :expected_status_code => 200, :parameters => { :store => '<store_x>+<store_y>' } }
+      ).and_return("http://session:5555")
+      AllegroGraph::Session.create @server, :store => ['store_x', 'store_y']
+    end
+
+    it "should raise an error if no store is supplied" do
+      lambda do
+        AllegroGraph::Session.create @server
+      end.should raise_error(ArgumentError)
     end
 
     it "should return a session" do

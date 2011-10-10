@@ -13,6 +13,8 @@ The features that are exposed by this client are...
 * performing SparQL and Prolog queries
 * mapping of data type
 
+Build status: {<img src="http://travis-ci.org/phifty/agraph.png" />}[http://travis-ci.org/phifty/agraph]
+
 == Installation
 
 There are no special dependencies. Just type

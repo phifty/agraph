@@ -203,6 +203,14 @@ describe AllegroGraph::Repository do
 
   end
 
+  describe "remove_duplicates" do
+
+    it "should remove the duplicates" do
+      @repository.remove_duplicates.should == 27
+    end
+
+  end
+
   describe "transaction" do
 
     before :each do

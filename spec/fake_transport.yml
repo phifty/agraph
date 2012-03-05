@@ -113,6 +113,14 @@
     :code:      "200"
     :body:      "3"
 -
+  :http_method: "delete"
+  :url:         "http://localhost:10035/catalogs/test_catalog/repositories/test_repository/statements/duplicates"
+  :parameters:
+    :mode:      "spog"
+  :response:
+    :code:      "200"
+    :body:      "27"
+-
   :http_method: "post"
   :url:         "http://localhost:10035/catalogs/test_catalog/repositories/test_repository/statements"
   :response:

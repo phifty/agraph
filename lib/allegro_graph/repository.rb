@@ -65,6 +65,11 @@ module AllegroGraph
       response.to_i
     end
 
+    def remove_duplicates(mode=:spog)
+      response = @server.request_http :delete, self.path + "/statements/duplicates", :parameters => {:mode => mode.to_s}, :expected_status_code => 200
+      response.to_i
+    end
+
     def transaction(options={}, &block)
       self.class.transaction self, options, &block
     end

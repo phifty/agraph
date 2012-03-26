@@ -113,6 +113,15 @@
     :code:      "200"
     :body:      "3"
 -
+  :http_method: "post"
+  :url:         "http://localhost:10035/catalogs/test_catalog/repositories/test_repository/indices/optimize"
+  :parameters:
+    :wait:      "false"
+    :level:     "1"
+  :response:
+    :code:      "204"
+    :body:      "nil"
+-
   :http_method: "delete"
   :url:         "http://localhost:10035/catalogs/test_catalog/repositories/test_repository/statements/duplicates"
   :parameters:

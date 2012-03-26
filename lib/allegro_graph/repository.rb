@@ -70,6 +70,12 @@ module AllegroGraph
       response.to_i
     end
 
+    def optimize(parameters={})
+      parameters = { :wait => 'false', :level => '1' }.merge(parameters)
+      response = @server.request_http :post, self.path + "/indices/optimize", :parameters => parameters, :expected_status_code => 204
+      response == 'nil'
+    end
+
     def transaction(options={}, &block)
       self.class.transaction self, options, &block
     end

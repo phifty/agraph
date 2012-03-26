@@ -211,6 +211,14 @@ describe AllegroGraph::Repository do
 
   end
 
+  describe "optimize" do
+
+    it "should optimize the indices" do
+      @repository.optimize.should be_true
+    end
+
+  end
+
   describe "transaction" do
 
     before :each do

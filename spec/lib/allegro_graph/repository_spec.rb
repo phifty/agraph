@@ -211,6 +211,22 @@ describe AllegroGraph::Repository do
 
   end
 
+  describe "suppress_duplicates=" do
+
+    it "should set the suppress duplicates" do
+      (@repository.suppress_duplicates=:spog).should == :spog
+    end
+
+  end
+
+   describe "suppress_duplicates" do
+
+    it "should set the suppress duplicates" do
+      @repository.suppress_duplicates.should == :spog
+    end
+
+  end
+
   describe "optimize" do
 
     it "should optimize the indices" do

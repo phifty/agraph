@@ -65,7 +65,28 @@ module AllegroGraph
       response.to_i
     end
 
-    def transaction(options = { }, &block)
+    def remove_duplicates(mode=:spog)
+      response = @server.request_http :delete, self.path + "/statements/duplicates", :parameters => {:mode => mode.to_s}, :expected_status_code => 200
+      response.to_i
+    end
+
+    def suppress_duplicates=(type=:spog)
+      response = @server.request_http :put, self.path + "/suppressDuplicates", :parameters => {:type => type.to_s}, :expected_status_code => 204
+      true
+    end
+
+    def suppress_duplicates
+      strategy = @server.request_http :get, self.path + "/suppressDuplicates", :expected_status_code => 200
+      strategy == 'false' ? false : strategy.to_sym
+    end
+
+    def optimize(parameters={})
+      parameters = { :wait => 'false', :level => '1' }.merge(parameters)
+      response = @server.request_http :post, self.path + "/indices/optimize", :parameters => parameters, :expected_status_code => 204
+      response == 'nil'
+    end
+
+    def transaction(options={}, &block)
       self.class.transaction self, options, &block
     end
 

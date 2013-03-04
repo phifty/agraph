@@ -203,6 +203,38 @@ describe AllegroGraph::Repository do
 
   end
 
+  describe "remove_duplicates" do
+
+    it "should remove the duplicates" do
+      @repository.remove_duplicates.should == 27
+    end
+
+  end
+
+  describe "suppress_duplicates=" do
+
+    it "should set the suppress duplicates" do
+      (@repository.suppress_duplicates=:spog).should == :spog
+    end
+
+  end
+
+   describe "suppress_duplicates" do
+
+    it "should set the suppress duplicates" do
+      @repository.suppress_duplicates.should == :spog
+    end
+
+  end
+
+  describe "optimize" do
+
+    it "should optimize the indices" do
+      @repository.optimize.should be_true
+    end
+
+  end
+
   describe "transaction" do
 
     before :each do

@@ -90,7 +90,7 @@ module AllegroGraph
       self.class.transaction self, options, &block
     end
 
-    def self.transaction(repository, options={}, &block)
+    def self.transaction(repository, options = { }, &block)
       session = Session.create repository, options
       begin
         session.instance_eval &block

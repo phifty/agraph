@@ -7,7 +7,7 @@ require 'rspec/core/rake_task'
 gem 'reek'
 require 'reek/rake/task'
 
-require 'rake/rdoctask'
+require 'rdoc/task'
 
 task :default => :spec
 

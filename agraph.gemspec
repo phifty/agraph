@@ -2,8 +2,8 @@
 
 specification = Gem::Specification.new do |specification|
   specification.name                  = "agraph"
-  specification.version               = "0.1.5"
-  specification.date                  = "2013-10-10"
+  specification.version               = "0.2"
+  specification.date                  = "2013-03-05"
   specification.email                 = "b.phifty@gmail.com"
   specification.homepage              = "http://github.com/phifty/agraph"
   specification.summary               = "Client for the AllegroGraph 4.x graph database."

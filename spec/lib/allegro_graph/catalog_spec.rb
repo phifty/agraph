@@ -5,7 +5,7 @@ describe AllegroGraph::Catalog do
 
   before :each do
     fake_transport!
-    @server = AllegroGraph::Server.new :username => "test", :password => "test"
+    @server = AllegroGraph::Server.new :username => ENV['AG_USER'], :password => ENV['AG_PASS']
     @catalog = AllegroGraph::Catalog.new @server, "test_catalog"
   end
 

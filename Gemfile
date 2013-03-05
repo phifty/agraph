@@ -1,9 +1,3 @@
-source :rubygems
+source 'https://rubygems.org'
 
-gem "rake"
-gem "transport"
-
-group :test do
-  gem "rspec"
-  gem "reek"
-end
+gemspec

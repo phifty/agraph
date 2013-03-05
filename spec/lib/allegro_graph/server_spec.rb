@@ -5,7 +5,7 @@ describe AllegroGraph::Server do
 
   before :each do
     fake_transport!
-    @server = AllegroGraph::Server.new :username => "test", :password => "test"
+    @server = AllegroGraph::Server.new :username => ENV['AG_USER'], :password => ENV['AG_PASS']
   end
 
   describe "==" do
@@ -21,13 +21,13 @@ describe AllegroGraph::Server do
     end
 
   end
-  
+
   describe "server" do
-    
+
     it "should return the server itself" do
       @server.server.should == @server
     end
-    
+
   end
 
   describe "request_http" do

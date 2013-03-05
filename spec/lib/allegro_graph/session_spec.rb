@@ -5,7 +5,7 @@ describe AllegroGraph::Session do
 
   before :each do
     fake_transport!
-    @session = AllegroGraph::Session.new :url => "http://session:5555", :username => "test", :password => "test"
+    @session = AllegroGraph::Session.new :url => "http://session:5555", :username => ENV['AG_USER'], :password => ENV['AG_PASS']
   end
 
   describe "request_http" do

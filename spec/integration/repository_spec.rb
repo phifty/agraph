@@ -6,7 +6,7 @@ describe "repository" do
   use_real_transport!
 
   before :each do
-    @server = AllegroGraph::Server.new :username => "test", :password => "test"
+    @server = AllegroGraph::Server.new :username => ENV['AG_USER'], :password => ENV['AG_PASS']
     @repository = AllegroGraph::Repository.new @server, "test_repository"
   end
 
@@ -17,7 +17,7 @@ describe "repository" do
     end
 
     it "should provide a list of repositories" do
-      @server.root_catalog.repositories.should == [ @repository ]
+      @server.root_catalog.repositories.should include(@repository)
     end
 
   end

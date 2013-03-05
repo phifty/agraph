@@ -4,7 +4,7 @@ require File.expand_path(File.join(File.dirname(__FILE__), "..", "..", "lib", "a
 describe "mapping" do
 
   before :each do
-    @server = AllegroGraph::Server.new :username => "test", :password => "test"
+    @server = AllegroGraph::Server.new :username => ENV['AG_USER'], :password => ENV['AG_PASS']
     @repository = AllegroGraph::Repository.new @server, "test_repository"
     @repository.create_if_missing!
     @statements = @repository.statements
